@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rave-data = { path = "../rave-data" }
+rave-entity = { path = "../rave-entity" }
+rave-migration = { path = "../rave-migration" }
 tokio = { version = "1.29", features = ["full"] }
 axum = "0.6.18"
 axum-macros = "0.3"
 dotenvy = "0.15.7"
 async-graphql-axum = "5.0.10"
-# migration = { path = "../migration" }

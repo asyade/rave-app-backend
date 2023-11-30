@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 rave-migration = { path = "../../crates/rave-migration" }
 rave-api = { path = "../../crates/rave-api" }
+dotenv = "0.15.0"
+clap = { version = "4.4.10", features = ["derive"] }
+tokio = { version = "1.29", features = ["full"] }
+env_logger = "0.10.1"

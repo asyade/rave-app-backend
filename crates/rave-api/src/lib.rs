@@ -1,14 +1,22 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+mod graphql;
+mod db;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use dotenvy::dotenv;
+use axum::{
+    extract::State,
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
+};
+use graphql::schema::{build_schema, AppSchema};
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub async fn serve() {
+    dotenv().ok();
+
+    let app = Router::new();
+
+    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
