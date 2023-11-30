@@ -1,0 +1,13 @@
+[package]
+name = "rave-data"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+
+[dependencies.async-graphql]
+version = "5.0.10"
+
+[dependencies.sea-orm]
+version = "0.12.6"

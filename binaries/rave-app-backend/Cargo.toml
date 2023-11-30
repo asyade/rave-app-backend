@@ -1,0 +1,8 @@
+[package]
+name = "rave-app-backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rave-migration = { path = "../../crates/rave-migration" }
+rave-api = { path = "../../crates/rave-api" }
