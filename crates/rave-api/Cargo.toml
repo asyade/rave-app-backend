@@ -6,12 +6,18 @@ edition = "2021"
 [dependencies]
 rave-entity = { path = "../rave-entity" }
 tokio = { version = "1.29", features = ["full"] }
-axum = "0.6"
 axum-macros = "0.4"
 dotenvy = "0.15.7"
 async-graphql-axum = "6.0.11"
 thiserror = "1"
+tracing = "0.1"
+tower-http = { version = "0.4.0", features = ["trace"] }
+uuid = "1.6"
 
 [dependencies.sqlx]
 version = "0.7"
 features = ["runtime-tokio-rustls", "postgres", "macros", "uuid"]
+
+[dependencies.axum]
+version = "0.6"
+features = ["tracing"]

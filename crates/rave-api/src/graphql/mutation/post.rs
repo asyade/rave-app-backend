@@ -1,52 +1,43 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::iam::user::{self, User};
-
+use rave_entity::post::{self, Post};
 use crate::services::database::Database;
 
-// I normally separate the input types into separate files/modules, but this is just
-// a quick example.
-
 #[derive(InputObject)]
-pub struct CreateUserInput {
+pub struct CreatePostInput {
     pub name: String,
     pub email: String,
 }
 
-impl CreateUserInput {
-    fn into_model_with_arbitrary_id(self) -> User {
-        User {
-            sid: unimplemented!(),
-            name: unimplemented!(),
-            email: unimplemented!(),
-        }
+impl CreatePostInput {
+    fn into_model_with_arbitrary_id(self) -> Post {
+        todo!()
     }
 }
 
 #[derive(SimpleObject)]
-pub struct DeleteResult {
+pub struct DeletePostResult {
     pub success: bool,
-    pub rows_affected: u64,
 }
 
 #[derive(Default)]
-pub struct UserMutation;
+pub struct PostMutation;
 
 #[Object]
-impl UserMutation {
-    pub async fn create_user(
+impl PostMutation {
+    pub async fn create_post(
         &self,
         _ctx: &Context<'_>,
-        _input: CreateUserInput,
-    ) -> Result<User> {
+        _input: CreatePostInput,
+    ) -> Result<Post> {
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
 
         // Ok(Mutation::create_note(conn, input.into_model_with_arbitrary_id()).await?)
-        unimplemented!()
+        todo!()
     }
 
-    // pub async fn delete_note(&self, ctx: &Context<'_>, id: i32) -> Result<DeleteResult> {
+    pub async fn delete_post(&self, ctx: &Context<'_>, id: i32) -> Result<DeletePostResult> {
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
 
@@ -60,7 +51,7 @@ impl UserMutation {
         // rows_affected: res.rows_affected,
         // })
         // } else {
-        // unimplemented!()
+        todo!()
         // }
-    // }
+    }
 }

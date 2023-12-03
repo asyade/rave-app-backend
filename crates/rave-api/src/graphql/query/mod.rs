@@ -1,6 +1,7 @@
 use rave_entity::async_graphql;
 
 pub mod user;
+pub mod feed;
 
 pub use user::UserQuery;
 

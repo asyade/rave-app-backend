@@ -3,7 +3,5 @@ pub use sqlx;
 
 pub mod prelude;
 pub mod iam;
-
-#[cfg(test)]
-mod tests {
-}
+pub mod feed;
+pub mod post;

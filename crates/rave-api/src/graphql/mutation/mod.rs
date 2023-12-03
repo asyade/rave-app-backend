@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
 pub mod user;
+pub mod post;
 
 pub use user::UserMutation;
+pub use post::PostMutation;
 
-// Add your other ones here to create a unified Mutation object
-// e.x. Mutation(NoteMutation, OtherMutation, OtherOtherMutation)
 #[derive(async_graphql::MergedObject, Default)]
-pub struct Mutation(UserMutation);
+pub struct Mutation(UserMutation, PostMutation);
