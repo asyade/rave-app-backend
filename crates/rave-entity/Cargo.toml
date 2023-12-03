@@ -6,8 +6,9 @@ edition = "2021"
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 
-[dependencies.async-graphql]
-version = "5.0.10"
+[dependencies.sqlx]
+version = "0.7"
+features = ["runtime-tokio-rustls", "postgres", "macros", "uuid"]
 
-[dependencies.sea-orm]
-version = "0.12.6"
+[dependencies.async-graphql]
+version = "6.0.11"
