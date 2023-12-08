@@ -1,9 +1,10 @@
 use std::vec;
 
 use crate::prelude::*;
-use rave_entity::post::{Post, PostContent};
+use rave_entity::{post::{Post, PostContent}, prelude::{InputType, SimpleObject}};
 
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
 pub enum FeedCategory {
     Home,
     Gems,
@@ -23,13 +24,14 @@ pub struct Feed {
     version: i32,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]
 pub struct FeedChunk {
-    feed_uid: Uuid,
     version: i32,
     offset: usize,
     posts: Vec<Post>,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]
 pub struct FeedOffset {
     pub version: i32,
     pub offset: usize,
@@ -40,7 +42,8 @@ impl FeedProvider {
         Self {}
     }
     
-    pub async fn feed(
+    pub async fn get(
+        &self,
         feed_uid: Option<Uuid>,
         owner_uid: Uuid,
         category: FeedCategory,

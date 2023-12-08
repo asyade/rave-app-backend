@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::{prelude::*, services::feed_provider::{FeedProvider, FeedCategory, FeedOffset, FeedChunk}};
 
 use async_graphql::{Context, Object, Result};
 use rave_entity::{
@@ -11,17 +11,10 @@ pub struct FeedQuery;
 
 #[Object]
 impl FeedQuery {
-    async fn get_feed(&self, ctx: &Context<'_>, name: String) -> Result<Option<Feed>> {
+    async fn get_current_user_feed(&self, ctx: &Context<'_>, category: FeedCategory, limit: usize) -> Result<FeedChunk> {
         dbg!(ctx.field());
-        let db = ctx.data::<Database>()?;
-        // let user = sqlx::query_as!(
-        //     Feed,
-        //     r#"SELECT sid, name, email FROM public_users WHERE sid = '1'"#
-        // )
-        // .fetch_one(&db.pool)
-        // .await?;
-        // Ok(Some(user))
-        unimplemented!()
+        let feed_provider = ctx.data::<FeedProvider>()?;
+        let chunk = feed_provider.get(None, unimplemented!(), category, limit, None).await?;
+        Ok(chunk)
     }
-
 }

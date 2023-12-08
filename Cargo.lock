@@ -1479,6 +1479,7 @@ dependencies = [
  "axum-macros",
  "dotenvy",
  "rave-entity",
+ "serde",
  "sqlx",
  "thiserror",
  "tokio",

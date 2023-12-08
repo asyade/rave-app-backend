@@ -13,6 +13,7 @@ thiserror = "1"
 tracing = "0.1"
 tower-http = { version = "0.4.0", features = ["trace"] }
 uuid = "1.6"
+serde = { version = "1", features = ["derive"] }
 
 [dependencies.sqlx]
 version = "0.7"
