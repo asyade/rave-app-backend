@@ -16,7 +16,7 @@ pub struct CreateUserInput {
 impl CreateUserInput {
     fn into_model_with_arbitrary_id(self) -> User {
         User {
-            sid: unimplemented!(),
+            entity_sid: unimplemented!(),
             name: unimplemented!(),
             email: unimplemented!(),
         }

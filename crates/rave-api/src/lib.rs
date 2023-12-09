@@ -6,14 +6,13 @@ pub mod prelude;
 mod graphql;
 mod services;
 
-use std::time::Duration;
-
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::body::Bytes;
 use axum::extract::MatchedPath;
 use axum::http::HeaderMap;
+use axum::Extension;
 use axum::{
     extract::State,
     http::{Request, Response, StatusCode},
@@ -21,57 +20,73 @@ use axum::{
     routing::get,
     Router,
 };
-use axum_macros::debug_handler;
+use graphql::mutation::Mutation;
+use graphql::query::Query;
 use graphql::schema::{build_schema, AppSchema};
 use prelude::*;
+use services::iam::api_user::ApiUser;
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::trace::TraceLayer;
-use tracing::{info_span, Span};
 
-pub async fn serve() {
-    let schema = build_schema()
+use crate::services::iam::Iam;
+
+pub mod options;
+
+pub type ApiSchema = Schema<Query, Mutation, EmptySubscription>;
+
+#[derive(Clone)]
+pub struct ApiState {
+    pub schema: ApiSchema,
+}
+
+#[instrument(skip(options))]
+pub async fn serve(options: RaveApiOptions) {
+    let schema: ApiSchema = build_schema()
         .await
-        .expect("Failed to build graphql schema !");
+        .expect("failed to build graphql schema");
+
+    let state = ApiState { schema };
+
+    let iam = Iam::init(options.auth0.clone())
+        .await
+        .expect("failed to initialize IAM service");
 
     let app = Router::new()
-        .route(
-            "/",
-            get(graphiql).post_service(async_graphql_axum::GraphQL::new(schema)),
-        )
+        // .layer(Extension(Arc::new(iam)))
+        .route("/", get(graphiql).post(graphql_handler))
         .layer(
-            TraceLayer::new_for_http()
-                .make_span_with(|request: &Request<_>| {
-                    let matched_path = request
-                        .extensions()
-                        .get::<MatchedPath>()
-                        .map(MatchedPath::as_str);
-                    info_span!(
-                        "http_request",
-                        method = ?request.method(),
-                        matched_path,
-                        some_other_field = tracing::field::Empty,
-                    )
-                })
-                .on_request(|_request: &Request<_>, _span: &Span| {
-                    // created above.
-                })
-                .on_body_chunk(|_chunk: &Bytes, _latency: Duration, _span: &Span| {})
-                .on_eos(
-                    |_trailers: Option<&HeaderMap>, _stream_duration: Duration, _span: &Span| {},
+            TraceLayer::new_for_http().make_span_with(|request: &Request<_>| {
+                let matched_path = request
+                    .extensions()
+                    .get::<MatchedPath>()
+                    .map(MatchedPath::as_str);
+                info_span!(
+                    "http_request",
+                    method = ?request.method(),
+                    matched_path,
+                    some_other_field = tracing::field::Empty,
                 )
-                .on_failure(
-                    |_error: ServerErrorsFailureClass, _latency: Duration, _span: &Span| {},
-                ),
-        );
+            }),
+        )
+        .layer(Extension(iam))
+        .with_state(state);
 
-    let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 3000));
+    tracing::info!("starting server on {}", options.listen_address);
 
-    tracing::debug!("listening on {}", addr);
-
-    axum::Server::bind(&addr)
+    axum::Server::bind(&options.listen_address)
         .serve(app.into_make_service())
         .await
-        .unwrap();
+        .expect("failed to start server");
+}
+
+#[instrument(skip(req, schema))]//, user, schema), fields(api_user = %user))]
+async fn graphql_handler(
+    State(ApiState { schema, .. }): State<ApiState>,
+    user: ApiUser,
+    req: GraphQLRequest,
+) -> GraphQLResponse {
+    info!("handling graphql query");
+    schema.execute(req.into_inner().data(user)).await.into()
 }
 
 async fn handler_404() -> impl IntoResponse {

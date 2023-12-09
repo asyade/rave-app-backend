@@ -17,7 +17,7 @@ impl UserQuery {
         let db = ctx.data::<Database>()?;
         let user = sqlx::query_as!(
             User,
-            r#"SELECT sid, name, email FROM public_users WHERE sid = '1'"#
+            r#"SELECT entity_sid, name, email FROM public_users WHERE entity_sid = '1'"#
         )
         .fetch_one(&db.pool)
         .await?;

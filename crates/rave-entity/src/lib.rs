@@ -1,4 +1,5 @@
 pub use async_graphql;
+use async_graphql::Schema;
 pub use sqlx;
 
 pub mod prelude;

@@ -26,9 +26,9 @@ pub struct Feed {
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]
 pub struct FeedChunk {
-    version: i32,
-    offset: usize,
-    posts: Vec<Post>,
+    pub version: i32,
+    pub offset: usize,
+    pub posts: Vec<Post>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]
@@ -50,11 +50,26 @@ impl FeedProvider {
         limit: usize,
         offset: Option<FeedOffset>,
     ) -> RaveApiResult<FeedChunk> {
-        // Ok(FeedChunk {
-            // feed_uid: Uuid,
-            // version: 1,
-            // offset: offset.unwrap_or(0),
-        // })
-        unimplemented!()
+        Ok(FeedChunk {
+            version: 1,
+            offset: 0,
+            posts: vec![
+                Post {
+                    sid: Some(1),
+                    owner_sid: None,
+                    content: None,
+                },
+                Post {
+                    sid: Some(2),
+                    owner_sid: None,
+                    content: None,
+                },
+                Post {
+                    sid: Some(3),
+                    owner_sid: None,
+                    content: None,
+                }
+            ],
+        })
     }
 }
