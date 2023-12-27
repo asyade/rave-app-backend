@@ -1,40 +1,26 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::iam::user::{self, PublicUser};
 
 use crate::services::database::Database;
 
 // I normally separate the input types into separate files/modules, but this is just
 // a quick example.
 
-#[derive(InputObject)]
-pub struct CreateUserInput {
-    pub name: String,
-    pub email: String,
-}
-
-impl CreateUserInput {
-    fn into_model_with_arbitrary_id(self) -> PublicUser {
-        unimplemented!()
-    }
-}
-
-#[derive(SimpleObject)]
-pub struct DeleteResult {
-    pub success: bool,
-    pub rows_affected: u64,
-}
-
 #[derive(Default)]
 pub struct UserMutation;
 
+#[derive(InputObject)]
+pub struct UpdateUserInput {
+    pub uid: String,
+}
+
 #[Object]
 impl UserMutation {
-    pub async fn create_user(
+    pub async fn update_user(
         &self,
         _ctx: &Context<'_>,
-        _input: CreateUserInput,
-    ) -> Result<PublicUser> {
+        _input: UpdateUserInput,
+    ) -> Result<String> {
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
 

@@ -6,7 +6,7 @@ use crate::{
 };
 
 use async_graphql::{Context, Object, Result};
-use rave_entity::{async_graphql, feed::Feed};
+use rave_entity::{async_graphql};
 
 #[derive(Default)]
 pub struct FeedQuery;

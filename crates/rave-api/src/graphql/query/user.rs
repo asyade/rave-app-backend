@@ -1,18 +1,13 @@
 use crate::prelude::*;
 
 use async_graphql::{Context, Object, Result};
-use rave_entity::{
-    async_graphql,
-    iam::user::{PublicUser},
-};
-
 
 #[derive(Default)]
 pub struct UserQuery;
 
 #[Object]
 impl UserQuery {
-    async fn get_current_user(&self, ctx: &Context<'_>) -> Result<Option<PublicUser>> {
+    async fn get_current_user(&self, ctx: &Context<'_>) -> Result<Option<String>> {
         dbg!(ctx.field());
         // let db = ctx.data::<Database>()?;
         // let user = sqlx::query_as!(

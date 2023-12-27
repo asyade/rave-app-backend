@@ -58,7 +58,6 @@ impl Iam {
             .map(|data| data.claims)?;
         tracing::Span::current().record("sub", &claims.sub.as_str());
         tracing::Span::current().record("email", &claims.email.as_str());
-        info!("found valid claims, looking for user in database");
         Self::api_user_from_claims(&self.database, claims, true).await
     }
 
@@ -85,7 +84,6 @@ impl Iam {
 
         match stored_user {
             Ok(user) => {
-                info!("found stored public user from token");
                 Ok(IdentifiedApiUser {
                     stored: user,
                     claims,
