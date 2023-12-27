@@ -4,6 +4,7 @@ use sqlx::pool::PoolConnection;
 use sqlx::postgres::Postgres;
 use sqlx::Pool;
 
+#[derive(Clone)]
 pub struct Database {
     pub pool: Pool<Postgres>,
 }

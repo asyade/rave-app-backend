@@ -24,7 +24,7 @@ use graphql::mutation::Mutation;
 use graphql::query::Query;
 use graphql::schema::{build_schema, AppSchema};
 use prelude::*;
-use services::iam::api_user::ApiUser;
+use services::iam::api_user::AnyApiUser;
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::trace::TraceLayer;
 
@@ -41,13 +41,15 @@ pub struct ApiState {
 
 #[instrument(skip(options))]
 pub async fn serve(options: RaveApiOptions) {
-    let schema: ApiSchema = build_schema()
+    let db = Database::new().await.expect("Failed to initialize database pool");
+
+    let schema: ApiSchema = build_schema(db.clone())
         .await
         .expect("failed to build graphql schema");
 
     let state = ApiState { schema };
 
-    let iam = Iam::init(options.auth0.clone())
+    let iam = Iam::init(db, options.auth0.clone())
         .await
         .expect("failed to initialize IAM service");
 
@@ -79,13 +81,12 @@ pub async fn serve(options: RaveApiOptions) {
         .expect("failed to start server");
 }
 
-#[instrument(skip(req, schema))]//, user, schema), fields(api_user = %user))]
+#[instrument(skip(req, user, schema), fields(api_user = %user))]
 async fn graphql_handler(
     State(ApiState { schema, .. }): State<ApiState>,
-    user: ApiUser,
+    user: AnyApiUser,
     req: GraphQLRequest,
 ) -> GraphQLResponse {
-    info!("handling graphql query");
     schema.execute(req.into_inner().data(user)).await.into()
 }
 

@@ -5,9 +5,10 @@ pub mod user {
     use super::*;
 
     #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject, sqlx::FromRow)]
-    pub struct User {
-        pub entity_sid: Option<i32>,
-        pub name: Option<String>,
-        pub email: Option<String>,
+    pub struct PublicUser {
+        pub external_user_id: String,
+        pub entity_sid: i32,
+        pub name: String,
+        pub email: String,
     }
 }

@@ -4,20 +4,24 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rave-entity = { path = "../rave-entity" }
-tokio = { version = "1.29", features = ["full"] }
-axum-macros = "0.4"
-axum-jwks = "0.5"
-dotenvy = "0.15.7"
-async-graphql-axum = "6.0.11"
+dotenvy = "^0.15"
 thiserror = "1"
-tracing = "0.1"
-tower-http = { version = "0.4.0", features = ["trace"] }
+tracing = "^0.1"
+async-trait = "^0.1"
+async-recursion = "^1.0"
 uuid = { version = "1.6", features = [ "v4", "serde" ] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
-async-trait = "0.1"
+
+tokio = { version = "1.29", features = ["full"] }
+tower-http = { version = "0.4.0", features = ["trace"] }
 reqwest = { version = "0.11", features = ["json"] }
+
+async-graphql-axum = "6.0.11"
+axum-jwks = "0.5"
+axum-macros = "0.4"
+
+rave-entity = { path = "../rave-entity" }
 
 [dependencies.sqlx]
 version = "0.7"

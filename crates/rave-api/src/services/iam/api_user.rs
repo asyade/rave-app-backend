@@ -13,16 +13,23 @@ use axum::{
     response::Response,
     TypedHeader,
 };
+use rave_entity::iam::user::PublicUser;
 use reqwest::Client;
 
 #[derive(Debug)]
-pub enum ApiUser {
+pub enum AnyApiUser {
     Guest,
-    Identified { claims: IdTokenClaims },
+    Identified(IdentifiedApiUser),
+}
+
+#[derive(Debug)]
+pub struct IdentifiedApiUser {
+    pub claims: IdTokenClaims,
+    pub stored: PublicUser,
 }
 
 #[async_trait]
-impl<S: Send + Sync> FromRequestParts<S> for ApiUser {
+impl<S: Send + Sync> FromRequestParts<S> for AnyApiUser {
     type Rejection = async_graphql_axum::GraphQLResponse;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
@@ -32,14 +39,15 @@ impl<S: Send + Sync> FromRequestParts<S> for ApiUser {
                     .extensions
                     .get::<Iam>()
                     .ok_or_else(|| build_error_response("iam extension not installed"))?;
-                Ok(Self::Identified {
-                    claims: iam
-                        .id_token_claims(auth.0.token())
-                        .await
-                        .map_err(|e| build_error_response(&e.to_string()))?,
-                })
+
+                let user = iam
+                    .api_user_from_token(auth.0.token())
+                    .await
+                    .map_err(|e| build_error_response(&e.to_string()))?;
+
+                Ok(Self::Identified(user))
             }
-            _ => Ok(ApiUser::Guest),
+            _ => Ok(AnyApiUser::Guest),
         }
     }
 }
@@ -50,11 +58,11 @@ fn build_error_response(details: &str) -> GraphQLResponse {
     async_graphql_axum::GraphQLResponse::from(response)
 }
 
-impl Display for ApiUser {
+impl Display for AnyApiUser {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ApiUser::Guest => write!(f, "Guest"),
-            ApiUser::Identified { claims } => write!(f, "{:?}", claims),
+            AnyApiUser::Guest => write!(f, "Guest"),
+            AnyApiUser::Identified(user) => write!(f, "{}={}", user.claims.email, user.claims.sub),
         }
     }
 }

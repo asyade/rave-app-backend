@@ -2,7 +2,6 @@ use crate::{
     prelude::*,
     services::{
         feed_provider::{FeedCategory, FeedChunk, FeedOffset, FeedProvider},
-        iam::api_user::ApiUser,
     },
 };
 

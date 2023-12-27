@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::iam::user::{self, User};
+use rave_entity::iam::user::{self, PublicUser};
 
 use crate::services::database::Database;
 
@@ -14,12 +14,8 @@ pub struct CreateUserInput {
 }
 
 impl CreateUserInput {
-    fn into_model_with_arbitrary_id(self) -> User {
-        User {
-            entity_sid: unimplemented!(),
-            name: unimplemented!(),
-            email: unimplemented!(),
-        }
+    fn into_model_with_arbitrary_id(self) -> PublicUser {
+        unimplemented!()
     }
 }
 
@@ -38,7 +34,7 @@ impl UserMutation {
         &self,
         _ctx: &Context<'_>,
         _input: CreateUserInput,
-    ) -> Result<User> {
+    ) -> Result<PublicUser> {
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
 
