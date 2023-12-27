@@ -13,7 +13,7 @@ use axum::{
     response::Response,
     TypedHeader,
 };
-use rave_entity::iam::user::PublicUser;
+use rave_entity::graph::user::ExternalUserViewRow;
 use reqwest::Client;
 
 #[derive(Debug)]
@@ -25,7 +25,7 @@ pub enum AnyApiUser {
 #[derive(Debug)]
 pub struct IdentifiedApiUser {
     pub claims: IdTokenClaims,
-    pub stored: PublicUser,
+    pub stored: ExternalUserViewRow,
 }
 
 #[async_trait]

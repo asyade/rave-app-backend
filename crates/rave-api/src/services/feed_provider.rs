@@ -1,7 +1,7 @@
 use std::vec;
 
 use crate::prelude::*;
-use rave_entity::{prelude::{InputType, SimpleObject}, graph::feed::FeedPostView, async_graphql::MergedObject};
+use rave_entity::{prelude::{InputType, SimpleObject}, async_graphql::MergedObject};
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
@@ -28,7 +28,14 @@ pub struct Feed {
 pub struct FeedChunk {
     pub version: i32,
     pub offset: usize,
-    pub posts: Vec<FeedPostView>,
+    pub posts: Vec<FeedPost>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]
+pub struct FeedPost {
+    pub uid: String,
+    pub entity_sid: i32,
+    pub content: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject)]

@@ -10,6 +10,7 @@ use axum::{
 };
 use axum_jwks::Jwks;
 use error::*;
+use rave_entity::graph::user::ExternalUserViewRow;
 use reqwest::Client;
 use sqlx::PgPool;
 
@@ -17,8 +18,6 @@ use self::{
     api_user::{AnyApiUser, IdentifiedApiUser},
     models::IdTokenClaims,
 };
-
-use rave_entity::iam::user::PublicUser;
 
 pub mod api_user;
 pub mod error;
@@ -71,7 +70,7 @@ impl Iam {
             .acquire()
             .await
             .map_err(|_| IamError::DatabaseUnavailable)?;
-        let stored_user = sqlx::query_as::<_, PublicUser>(
+        let stored_user = sqlx::query_as::<_, ExternalUserViewRow>(
             r#"
                 SELECT external_user_id, entity_sid, email, name
                 FROM public_users

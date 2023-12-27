@@ -1,12 +1,9 @@
-use sqlx::types::Uuid;
+use crate::prelude::*;
 
-pub struct PrivateUserViewRow {
-    pub uid: Uuid,
-    pub email: String,
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, SimpleObject, sqlx::FromRow)]
+pub struct ExternalUserViewRow {
+    pub external_user_id: String,
+    pub entity_sid: i32,
     pub name: String,
-    pub nickname: String,
-    pub email_verified: bool,
-    pub sub: String,
-    pub exp: i64,
-    pub iat: i64,
+    pub email: String,
 }
