@@ -13,5 +13,7 @@ pub struct ContentRow {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum ContentFieldJson {
-    Text(String),
+    Text {
+        text: String
+    },
 }
