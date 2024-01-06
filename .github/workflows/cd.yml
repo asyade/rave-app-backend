@@ -20,7 +20,7 @@ jobs:
       - name: push binary to dev instance
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
+          host: ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
           username: ubuntu
           key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
           port: 22
@@ -30,8 +30,8 @@ jobs:
       - name: restart dev service
         uses: appleboy/ssh-action@v1.0.2
         with:
-          host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
-          username: ubuntus
+          host: ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
+          username: ubuntu
           key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
           port: 22
           script: whoami
