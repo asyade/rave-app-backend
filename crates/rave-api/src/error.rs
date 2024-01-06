@@ -1,4 +1,4 @@
-use thiserror::Error;
+use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub enum RaveApiError{

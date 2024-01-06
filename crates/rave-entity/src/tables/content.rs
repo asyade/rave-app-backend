@@ -2,10 +2,10 @@ use crate::prelude::*;
 use sqlx::types::Uuid;
 
 pub struct ContentRow {
-    sid: i32,
-    uid: Uuid,
-    entity_sid: i32,
-    content: ContentFieldJson,
+    pub sid: i32,
+    pub uid: Uuid,
+    pub entity_sid: i32,
+    pub content: ContentFieldJson,
     // created_at,
     // updated_at
 }

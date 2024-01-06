@@ -21,10 +21,6 @@ axum-macros = "0.4"
 rave-entity = { path = "../rave-entity" }
 axum-jwks = { path = "../axum-jwks" }
 
-[dependencies.sqlx]
-version = "0.7"
-features = ["runtime-tokio-rustls", "postgres", "macros", "uuid"]
-
 [dependencies.axum]
 version = "0.7"
 features = ["tracing", "macros", "json", "ws", "multipart", "form"]
