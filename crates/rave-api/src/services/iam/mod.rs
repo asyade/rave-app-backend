@@ -3,10 +3,8 @@ use std::borrow::Borrow;
 use crate::{options::Auth0Options, prelude::*};
 use axum::{
     extract::FromRequestParts,
-    headers::{authorization::Bearer, Authorization},
     http::request::Parts,
     response::Response,
-    TypedHeader,
 };
 use axum_jwks::Jwks;
 use error::*;

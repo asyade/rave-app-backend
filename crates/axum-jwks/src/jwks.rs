@@ -110,11 +110,15 @@ impl Jwks {
                                 error: err,
                             }
                         })?;
-                    let mut validation = Validation::new(jwk.common.algorithm.or(alg).ok_or(
-                        JwkError::MissingAlgorithm {
-                            key_id: kid.clone(),
-                        },
-                    )?);
+                    let mut validation = Validation::new(
+                        jwk.common
+                            .key_algorithm
+                            .and_then(|e| jsonwebtoken::Algorithm::from_str(&e.to_string()).ok())
+                            .or(alg)
+                            .ok_or(JwkError::MissingAlgorithm {
+                                key_id: kid.clone(),
+                            })?,
+                    );
                     validation.set_audience(&[audience.clone()]);
 
                     keys.insert(

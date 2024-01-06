@@ -6,9 +6,10 @@ pub mod prelude;
 mod graphql;
 mod services;
 
+use tokio::net::TcpListener;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
-use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
+use async_graphql_axum::{GraphQLRequest, GraphQLResponse, GraphQL};
 use axum::body::Bytes;
 use axum::extract::MatchedPath;
 use axum::http::HeaderMap;
@@ -34,20 +35,15 @@ pub mod options;
 
 pub type ApiSchema = Schema<Query, Mutation, EmptySubscription>;
 
-#[derive(Clone)]
-pub struct ApiState {
-    pub schema: ApiSchema,
-}
-
 #[instrument(skip(options))]
 pub async fn serve(options: RaveApiOptions) {
-    let db = Database::new().await.expect("Failed to initialize database pool");
+    let db = Database::new()
+        .await
+        .expect("Failed to initialize database pool");
 
     let schema: ApiSchema = build_schema(db.clone())
         .await
         .expect("failed to build graphql schema");
-
-    let state = ApiState { schema };
 
     let iam = Iam::init(db, options.auth0.clone())
         .await
@@ -55,7 +51,7 @@ pub async fn serve(options: RaveApiOptions) {
 
     let app = Router::new()
         // .layer(Extension(Arc::new(iam)))
-        .route("/", get(graphiql).post(graphql_handler))
+        .route("/", get(graphiql).post_service(GraphQL::new(schema)))
         .layer(
             TraceLayer::new_for_http().make_span_with(|request: &Request<_>| {
                 let matched_path = request
@@ -70,24 +66,15 @@ pub async fn serve(options: RaveApiOptions) {
                 )
             }),
         )
-        .layer(Extension(iam))
-        .with_state(state);
+        .layer(Extension(iam));
 
     tracing::info!("starting server on {}", options.listen_address);
-
-    axum::Server::bind(&options.listen_address)
-        .serve(app.into_make_service())
+    let tcp_listener = TcpListener::bind(&options.listen_address)
+        .await
+        .expect("failed to bind address");
+    axum::serve(tcp_listener, app.into_make_service())
         .await
         .expect("failed to start server");
-}
-
-#[instrument(skip(req, user, schema), fields(api_user = %user))]
-async fn graphql_handler(
-    State(ApiState { schema, .. }): State<ApiState>,
-    user: AnyApiUser,
-    req: GraphQLRequest,
-) -> GraphQLResponse {
-    schema.execute(req.into_inner().data(user)).await.into()
 }
 
 async fn handler_404() -> impl IntoResponse {

@@ -1,10 +1,8 @@
 use axum::{
     async_trait,
     extract::FromRequestParts,
-    headers::{authorization::Bearer, Authorization},
-    http::{request::Parts, StatusCode},
+    http::{header::AUTHORIZATION, request::Parts, StatusCode},
     response::IntoResponse,
-    RequestPartsExt, TypedHeader,
 };
 use thiserror::Error;
 
@@ -31,12 +29,15 @@ impl<S> FromRequestParts<S> for Token {
     type Rejection = TokenError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let TypedHeader(Authorization(bearer)) = parts
-            .extract::<TypedHeader<Authorization<Bearer>>>()
-            .await
-            .map_err(|_| TokenError::Missing)?;
-
-        Ok(Self(bearer.token().to_owned()))
+        Ok(parts
+            .headers
+            .get(AUTHORIZATION)
+            .ok_or(TokenError::Missing)?
+            .to_str()
+            .map_err(|_| TokenError::Missing)?
+            .strip_prefix("Bearer ")
+            .map(|token| Token(token.to_owned()))
+            .ok_or(TokenError::Missing)?)
     }
 }
 
