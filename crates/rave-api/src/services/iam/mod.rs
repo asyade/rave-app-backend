@@ -34,7 +34,6 @@ pub struct Iam {
 impl Iam {
     #[instrument(skip(auth0_options, database), err, fields(domain = %auth0_options.domain, audience = %auth0_options.audience))]
     pub async fn init(database: Database, auth0_options: Auth0Options) -> IamResult<Self> {
-        tracing::info!("feetching jwks");
         let jwks =
             Jwks::from_oidc_url(&auth0_options.oidc_url(), auth0_options.audience.clone()).await?;
 

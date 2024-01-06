@@ -35,6 +35,7 @@ pub struct FeedChunk {
 pub struct FeedPost {
     pub uid: String,
     pub entity_sid: i32,
+    pub title: String,
     pub content: String,
 }
 
@@ -61,6 +62,36 @@ impl FeedProvider {
             version: 1,
             offset: 0,
             posts: vec![
+                FeedPost {
+                    uid: "1".to_string(),
+                    entity_sid: 1,
+                    title: "Hello, world!".to_string(),
+                    content: "Hello, world!".to_string(),
+                },
+                FeedPost {
+                    uid: "2".to_string(),
+                    entity_sid: 2,
+                    title: "Hello, world!".to_string(),
+                    content: "Hello, world!".to_string(),
+                },
+                FeedPost {
+                    uid: "3".to_string(),
+                    entity_sid: 3,
+                    title: "Hello, world!".to_string(),
+                    content: "Hello, world!".to_string(),
+                },
+                FeedPost {
+                    uid: "4".to_string(),
+                    entity_sid: 4,
+                    title: "Hello, world!".to_string(),
+                    content: "Hello, world!".to_string(),
+                },
+                FeedPost {
+                    uid: "5".to_string(),
+                    entity_sid: 5,
+                    title: "Hello, world!".to_string(),
+                    content: "Hello, world!".to_string(),
+                },
             ],
         })
     }
