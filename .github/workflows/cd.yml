@@ -16,18 +16,6 @@ jobs:
         with:
           command: build
           args: -p rave-app-backend --release
-      - uses: actions/upload-artifact@v2
-        with:
-          name: main-x86_64-unknown-linux-gnu
-          path: ./target/release/rave-app-backend
-
-  deploy_dev_instance:
-    name: Rust project
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: main-x86_64-unknown-linux-gnu
 
       - name: push binary to dev instance
         uses: appleboy/scp-action@v0.1.7
@@ -35,7 +23,7 @@ jobs:
           host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
           username: ubuntu
           key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
-          port: 443
+          port: 22
           source: "./target/release/rave-app-backend"
           target: /home/ubuntu/rave-app-backend
 
@@ -45,5 +33,5 @@ jobs:
           host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
           username: ubuntus
           key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
-          port: 443
+          port: 22
           script: whoami
