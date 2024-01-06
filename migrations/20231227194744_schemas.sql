@@ -4,13 +4,11 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-
-
 --
 -- Entities table
 --
 
-CREATE SEQUENCE public.entities_sid_seq
+CREATE SEQUENCE public.entity_sid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -18,12 +16,12 @@ CREATE SEQUENCE public.entities_sid_seq
     NO MAXVALUE
     CACHE 1;
 
-CREATE TABLE public.entities (
-    sid integer DEFAULT nextval('public.entities_sid_seq'::regclass) PRIMARY KEY NOT NULL,
+CREATE TABLE public.entity (
+    sid integer DEFAULT nextval('public.entity_sid_seq'::regclass) PRIMARY KEY NOT NULL,
     uid uuid DEFAULT uuid_generate_v4() NOT NULL
 );
 
-ALTER SEQUENCE public.entities_sid_seq OWNED BY public.entities.sid;
+ALTER SEQUENCE public.entity_sid_seq OWNED BY public.entity.sid;
 
 
 
@@ -31,7 +29,7 @@ ALTER SEQUENCE public.entities_sid_seq OWNED BY public.entities.sid;
 -- External identities table
 --
 
-CREATE SEQUENCE public.external_identities_sid_seq
+CREATE SEQUENCE public.external_identity_sid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -40,18 +38,18 @@ CREATE SEQUENCE public.external_identities_sid_seq
     CACHE 1;
 
 
-CREATE TABLE public.external_identities (
-    sid integer DEFAULT nextval('public.external_identities_sid_seq'::regclass) PRIMARY KEY NOT NULL,
+CREATE TABLE public.external_identity (
+    sid integer DEFAULT nextval('public.external_identity_sid_seq'::regclass) PRIMARY KEY NOT NULL,
     external_user_id character varying NOT NULL,
     email character varying NOT NULL,
     entity_sid integer NOT NULL,
     name character varying DEFAULT 'unamed'::character varying NOT NULL
 );
 
-ALTER SEQUENCE public.external_identities_sid_seq OWNED BY public.external_identities.sid;
+ALTER SEQUENCE public.external_identity_sid_seq OWNED BY public.external_identity.sid;
 
-ALTER TABLE ONLY public.external_identities
-    ADD CONSTRAINT external_identities_fk FOREIGN KEY (entity_sid) REFERENCES public.entities(sid) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.external_identity
+    ADD CONSTRAINT external_identities_fk FOREIGN KEY (entity_sid) REFERENCES public.entity(sid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -59,13 +57,13 @@ ALTER TABLE ONLY public.external_identities
 -- Public user view
 --
 
-CREATE VIEW public.public_users AS
+CREATE VIEW public.public_user AS
  SELECT e.sid AS entity_sid,
     ei.external_user_id,
     ei.email,
     ei.name
-   FROM (public.entities e
-     JOIN public.external_identities ei ON ((ei.entity_sid = e.sid)));
+   FROM (public.entity e
+     JOIN public.external_identity ei ON ((ei.entity_sid = e.sid)));
 
 
 
@@ -73,7 +71,7 @@ CREATE VIEW public.public_users AS
 -- Content table
 --
 
-CREATE SEQUENCE public.contents_sid_seq
+CREATE SEQUENCE public.content_sid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -81,8 +79,8 @@ CREATE SEQUENCE public.contents_sid_seq
     NO MAXVALUE
     CACHE 1;
 
-CREATE TABLE public.contents (
-    sid integer DEFAULT nextval('public.contents_sid_seq'::regclass) PRIMARY KEY NOT NULL,
+CREATE TABLE public.content (
+    sid integer DEFAULT nextval('public.content_sid_seq'::regclass) PRIMARY KEY NOT NULL,
     uid uuid DEFAULT uuid_generate_v4() NOT NULL,
     entity_sid integer NOT NULL,
     content jsonb NOT NULL,
@@ -90,13 +88,13 @@ CREATE TABLE public.contents (
     updated_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
-ALTER SEQUENCE public.contents_sid_seq OWNED BY public.contents.sid;
+ALTER SEQUENCE public.content_sid_seq OWNED BY public.content.sid;
 
 --
--- Posts table
+-- Post table
 --
 
-CREATE SEQUENCE public.posts_sid_seq
+CREATE SEQUENCE public.post_sid_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -104,23 +102,23 @@ CREATE SEQUENCE public.posts_sid_seq
     NO MAXVALUE
     CACHE 1;
 
-CREATE TABLE public.posts(
-    sid integer DEFAULT nextval('public.posts_sid_seq'::regclass) PRIMARY KEY NOT NULL,
+CREATE TABLE public.post(
+    sid integer DEFAULT nextval('public.post_sid_seq'::regclass) PRIMARY KEY NOT NULL,
     content_sid integer NOT NULL,
     title character varying NOT NULL
 );
 
-ALTER SEQUENCE public.posts_sid_seq OWNED BY public.posts.sid;
+ALTER SEQUENCE public.post_sid_seq OWNED BY public.post.sid;
 
-ALTER TABLE ONLY public.posts
-    ADD CONSTRAINT posts_fk FOREIGN KEY (content_sid) REFERENCES public.contents(sid) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.post
+    ADD CONSTRAINT post_fk FOREIGN KEY (content_sid) REFERENCES public.content(sid) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Posts view
+-- Post view
 --
 
-CREATE VIEW public.posts_view AS
+CREATE VIEW public.post_view AS
  SELECT
     c.uid AS uid,
     c.entity_sid,
@@ -128,5 +126,5 @@ CREATE VIEW public.posts_view AS
     c.content,
     c.created_at,
     c.updated_at
-   FROM (public.posts p
-     JOIN public.contents c ON ((c.sid = p.content_sid)));
+   FROM (public.post p
+     JOIN public.content c ON ((c.sid = p.content_sid)));

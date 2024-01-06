@@ -72,7 +72,7 @@ impl Iam {
         let stored_user = sqlx::query_as::<_, ExternalUserViewRow>(
             r#"
                 SELECT external_user_id, entity_sid, email, name
-                FROM public_users
+                FROM public_user
                 WHERE external_user_id = $1
             "#,
         )
@@ -97,10 +97,10 @@ impl Iam {
                 sqlx::query(
                     r#"
                         with created_entity as (
-                            insert into public.entities (sid, uid)
+                            insert into public.entity (sid, uid)
                                 values (default, default) returning sid
                         )
-                        insert into public.external_identities
+                        insert into public.external_identity
                             (sid, external_user_id, email, name, entity_sid)
                             values (default, $1, $2, $3, (select sid from created_entity))
                     "#,

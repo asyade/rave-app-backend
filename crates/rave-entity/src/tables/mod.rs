@@ -1,3 +1,4 @@
-pub mod contents;
+pub mod content;
+pub mod content_attachment;
 
-pub use contents::*;
+pub use content::*;
