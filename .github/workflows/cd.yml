@@ -11,7 +11,18 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
-      - uses: actions-rs/cargo@v1
+      - name: build
+        uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --all-features
+          args: -p rave-app-backend --release
+      - name: Push binaries to dev instance
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./target/release/rave-app-backend
+          remote_path: /opt/rave-app-backend/rave-app-backend
+          remote_host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
+          remote_user: ubuntu
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
+
