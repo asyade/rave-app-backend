@@ -4,32 +4,33 @@ use rave_entity::{tables::ContentFieldJson, async_graphql::Json};
 use crate::services::database::Database;
 
 #[derive(InputObject)]
-pub struct CreateContentInput {
-    content: Json<ContentFieldJson>,
+pub struct CreatePublicationInput {
+    content_uid: String,
 }
 
 #[derive(InputObject)]
-pub struct CreateContentAttachmentInput {
+pub struct CreatePublicationCommentInput {
+    publication_uid: String,
     content_uid: String,
 }
 
 #[derive(Default)]
-pub struct ContentMutation;
+pub struct PublicationMutation;
 
 #[Object]
-impl ContentMutation {
-    pub async fn create_content_attachment(
+impl PublicationMutation {
+    pub async fn create_publication(
         &self,
         _ctx: &Context<'_>,
-        _input: CreateContentAttachmentInput,
+        _input: CreatePublicationInput,
     ) -> Result<String> {
         unimplemented!()
     }
     
-    pub async fn create_content(
+    pub async fn create_publication_comment(
         &self,
         _ctx: &Context<'_>,
-        _input: CreateContentInput,
+        _input: CreatePublicationCommentInput,
     ) -> Result<String> {
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
