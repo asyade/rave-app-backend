@@ -24,5 +24,12 @@ jobs:
           remote_path: /home/ubuntu/rave-app-backend
           remote_host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
           remote_user: ubuntu
-          remote_key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
-
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
+          username: ubuntu
+          key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
+          port: 443
+          source: "./target/release/rave-app-backend"
+          target: /home/ubuntu/rave-app-backend
