@@ -24,7 +24,7 @@ jobs:
           username: ubuntu
           key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
           port: 22
-          source: "./target/release/rave-app-backend_main"
+          source: "./target/release/rave-app-backend"
           target: /home/ubuntu/
 
       - name: restart dev service
