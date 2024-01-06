@@ -16,15 +16,20 @@ jobs:
         with:
           command: build
           args: -p rave-app-backend --release
-      - name: Push binaries to dev instance
-        uses: burnett01/rsync-deployments@5.1
+      - uses: actions/upload-artifact@v2
         with:
-          switches: -avzr --delete
+          name: main-x86_64-unknown-linux-gnu
           path: ./target/release/rave-app-backend
-          remote_path: /home/ubuntu/rave-app-backend
-          remote_host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
-          remote_user: ubuntu
-      - name: copy file via ssh password
+
+  deploy_dev_instance:
+    name: Rust project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: main-x86_64-unknown-linux-gnu
+
+      - name: push binary to dev instance
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
@@ -33,3 +38,12 @@ jobs:
           port: 443
           source: "./target/release/rave-app-backend"
           target: /home/ubuntu/rave-app-backend
+
+      - name: restart dev service
+        uses: appleboy/ssh-action@v1.0.2
+        with:
+          host: ubuntu@ec2-52-47-32-158.eu-west-3.compute.amazonaws.com
+          username: ubuntus
+          key: "${{ secrets.SSH_PRIVATE_KEY_DEV_INSTANCE }}"
+          port: 443
+          script: whoami
