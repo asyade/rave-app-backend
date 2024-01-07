@@ -12,6 +12,7 @@ pub mod api_user;
 pub mod error;
 pub mod models;
 pub mod prelude;
+pub mod access;
 
 #[derive(Clone)]
 pub struct Iam {

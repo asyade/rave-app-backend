@@ -2,6 +2,8 @@ use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub enum IamError {
+    #[error("Guest has no entity sid")]
+    GuestUserHasNoEntitySid,
     #[error(transparent)]
     InvalidIdToken(axum_jwks::TokenError),
     #[error(transparent)]

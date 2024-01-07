@@ -3,13 +3,16 @@ use sqlx::types::Json;
 use super::CursorExecutor;
 use crate::{
     prelude::*,
-    tables::asset::{AssetKind, AssetRow, DataColumnJson},
+    tables::{
+        asset::{AssetKind, AssetRow, DataColumnJson},
+        entity::EntitySid,
+    },
 };
 
 pub trait AssetCursor {
     fn create_asset(
         &mut self,
-        owner_sid: PgSid,
+        owner_sid: EntitySid,
         kind: &AssetKind,
         data: &DataColumnJson,
     ) -> impl Future<Output = CoreDatabaseResult<AssetRow>>;
@@ -18,7 +21,7 @@ pub trait AssetCursor {
 impl<T: AsMut<CursorExecutor>> AssetCursor for T {
     async fn create_asset(
         &mut self,
-        owner_sid: PgSid,
+        owner_sid: EntitySid,
         kind: &AssetKind,
         data: &DataColumnJson,
     ) -> CoreDatabaseResult<AssetRow> {

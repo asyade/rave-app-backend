@@ -18,7 +18,7 @@ impl FeedQuery {
         category: FeedCategory,
         limit: usize,
     ) -> Result<FeedChunk> {
-        let api_user = ctx.data::<AnyApiUser>()?;
+        // let api_user = ctx.data::<AnyApiUser>()?;
         let feed_provider = ctx.data::<FeedProvider>()?;
         let chunk = feed_provider
             .get(None, Uuid::new_v4(), category, limit, None)

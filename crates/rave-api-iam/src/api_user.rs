@@ -1,5 +1,6 @@
+use crate::prelude::*;
 use super::models::IdTokenClaims;
-use rave_core_database::views::external_user::ExternalUserRow;
+use rave_core_database::{tables::entity::EntitySid, views::external_user::ExternalUserRow};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone)]
@@ -12,6 +13,20 @@ pub enum AnyApiUser {
 pub struct IdentifiedApiUser {
     pub claims: IdTokenClaims,
     pub stored: ExternalUserRow,
+}
+
+impl AnyApiUser {
+    pub fn entity_sid(&self) -> Option<EntitySid> {
+        match self {
+            AnyApiUser::Guest => None,
+            AnyApiUser::Identified(user) => Some(user.stored.entity_sid.clone()),
+        }
+    }
+
+    pub fn require_entity_sid(&self) -> IamResult<EntitySid> {
+        self.entity_sid()
+            .ok_or_else(|| IamError::GuestUserHasNoEntitySid)
+    }
 }
 
 impl Display for AnyApiUser {

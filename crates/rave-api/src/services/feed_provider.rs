@@ -55,6 +55,11 @@ impl FeedProvider {
         limit: usize,
         offset: Option<FeedOffset>,
     ) -> RaveApiResult<FeedChunk> {
+        let _ = feed_uid;
+        let _ = owner_uid;
+        let _ = category;
+        let _ = limit;
+        let _ = offset;
         Ok(FeedChunk {
             version: 1,
             offset: 0,

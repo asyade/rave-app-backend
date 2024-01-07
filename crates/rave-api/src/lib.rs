@@ -23,7 +23,7 @@ use axum::{
 use graphql::mutation::Mutation;
 use graphql::query::Query;
 use graphql::schema::{build_schema, AppSchema};
-use graphql::GraphQL;
+use graphql::service::GraphQL;
 use prelude::*;
 use rave_api_iam::api_user::AnyApiUser;
 use rave_api_iam::Iam;

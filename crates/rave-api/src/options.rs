@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 
 use rave_api_iam::Auth0Options;
+use rave_core_asset::options::AssetOptions;
 use serde::{Deserialize, Serialize};
 
 use crate::prelude::{RaveApiError, RaveApiResult};
@@ -12,6 +13,7 @@ pub struct RaveApiOptions {
     pub listen_address: SocketAddr,
     pub database_url: String,
     pub auth0: Auth0Options,
+    pub asset: AssetOptions,
 }
 
 impl RaveApiOptions {
@@ -39,6 +41,9 @@ impl RaveApiOptions {
                 client_secret: opt_from_env!("AUTH0_CLIENT_SECRET")?,
                 domain: opt_from_env!("AUTH0_DOMAIN")?,
                 audience: opt_from_env!("AUTH0_AUDIENCE")?,
+            },
+            asset: AssetOptions {
+                bucket_name: opt_from_env!("SVC_ASSET_AWS_BUCKET_NAME")?,
             },
         })
     }
