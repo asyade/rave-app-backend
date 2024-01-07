@@ -1,4 +1,4 @@
-use rave_entity::async_graphql;
+use crate::prelude::*;
 
 pub mod user;
 pub mod feed;

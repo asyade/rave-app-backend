@@ -1,4 +1,13 @@
 [workspace]
 resolver = "2"
 
-members = ["binaries/rave-app-backend", "crates/rave-api", "crates/rave-entity", "crates/axum-jwks"]
+members = [
+    "libraries/axum-jwks",
+    "binaries/rave-app-backend",
+    "crates/rave-api",
+    "crates/rave-api-entity",
+    "crates/rave-api-iam",
+    "crates/rave-core-common",
+    "crates/rave-core-asset",
+    "crates/rave-core-database",
+]

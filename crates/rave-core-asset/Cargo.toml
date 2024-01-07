@@ -1,0 +1,15 @@
+[package]
+name = "rave-core-asset"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "^0.1"
+rave-core-database = { path = "../rave-core-database" }
+rave-core-common = { path = "../rave-core-common" }
+
+[dependencies.tokio]
+version = "1.29"
+features = [ "full" ]

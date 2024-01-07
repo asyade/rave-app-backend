@@ -1,6 +1,5 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::{tables::content::ContentColumnJson, async_graphql::Json};
 
 #[derive(InputObject)]
 pub struct CreatePublicationInput {

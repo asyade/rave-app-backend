@@ -1,17 +1,13 @@
-use rave_entity::sqlx;
-
 use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub enum IamError {
     #[error(transparent)]
     InvalidIdToken(axum_jwks::TokenError),
-    #[error("failed to fetch JWKS: {0}")]
+    #[error(transparent)]
     JwksError(#[from] axum_jwks::JwksError),
-    #[error("sqlx error: {0}")]
-    DatabaseDriver(#[from] sqlx::Error),
-    #[error("failed to accquire database connection")]
-    DatabaseUnavailable,
+    #[error(transparent)]
+    DatabaseError(#[from] CoreDatabaseError),
 }
 
 pub type IamResult<T> = Result<T, IamError>;

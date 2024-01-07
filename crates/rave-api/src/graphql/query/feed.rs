@@ -1,12 +1,9 @@
+use async_graphql::{Context, Object, Result};
+
 use crate::{
     prelude::*,
-    services::{
-        feed_provider::{FeedCategory, FeedChunk, FeedOffset, FeedProvider},
-    },
+    services::feed_provider::{FeedCategory, FeedChunk, FeedOffset, FeedProvider},
 };
-
-use async_graphql::{Context, Object, Result};
-use rave_entity::{async_graphql};
 
 #[derive(Default)]
 pub struct FeedQuery;

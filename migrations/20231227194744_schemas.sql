@@ -4,6 +4,8 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+
+
 --
 -- Entities table
 --
@@ -67,6 +69,31 @@ CREATE VIEW public.public_user AS
 
 
 
+--
+-- Asset table
+--
+
+CREATE TYPE AssetKind AS ENUM ('image', 'video', 'audio');
+
+CREATE SEQUENCE public.asset_sid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE public.asset(
+    sid integer DEFAULT nextval('public.asset_sid_seq'::regclass) PRIMARY KEY NOT NULL,
+    uid uuid DEFAULT uuid_generate_v4() NOT NULL,
+    kind AssetKind NOT NULL,
+    data jsonb NOT NULL
+);
+
+ALTER SEQUENCE public.asset_sid_seq OWNED BY public.asset.sid;
+
+
+
 -- 
 -- Content table
 --
@@ -90,6 +117,8 @@ CREATE TABLE public.content (
 
 ALTER SEQUENCE public.content_sid_seq OWNED BY public.content.sid;
 
+
+
 --
 -- Post table
 --
@@ -112,6 +141,7 @@ ALTER SEQUENCE public.post_sid_seq OWNED BY public.post.sid;
 
 ALTER TABLE ONLY public.post
     ADD CONSTRAINT post_fk FOREIGN KEY (content_sid) REFERENCES public.content(sid) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
 
 --

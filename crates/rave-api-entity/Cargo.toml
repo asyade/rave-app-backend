@@ -1,0 +1,10 @@
+[package]
+name = "rave-api-entity"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.async-graphql]
+version = "7.0.0"
+
+[features]
+tempfile = ["async-graphql/tempfile"]

@@ -1,8 +1,5 @@
 use crate::prelude::*;
-use rave_entity::{
-    async_graphql::{Enum, MergedObject},
-    prelude::{InputType, SimpleObject},
-};
+use async_graphql::{Enum, MergedObject, SimpleObject};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Enum)]
 pub enum FeedCategory {

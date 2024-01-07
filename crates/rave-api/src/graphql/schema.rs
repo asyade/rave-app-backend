@@ -1,5 +1,4 @@
 use async_graphql::{EmptySubscription, Schema};
-use rave_entity::async_graphql;
 
 use crate::prelude::*;
 use crate::graphql::{mutation::Mutation, query::Query};

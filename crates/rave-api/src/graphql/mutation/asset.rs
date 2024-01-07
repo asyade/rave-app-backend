@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::async_graphql::{Json, Upload, Enum};
+use async_graphql::{Json, Upload, Enum};
 
 #[derive(Debug, InputObject)]
 pub struct CreateAssetInput {

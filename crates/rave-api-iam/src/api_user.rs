@@ -1,17 +1,9 @@
-use std::{
-    collections::HashMap,
-    fmt::{Display, Formatter},
-};
-
-use super::{error::IamError, models::IdTokenClaims, Iam};
-use async_graphql_axum::GraphQLResponse;
-use axum_jwks::Token;
-use rave_entity::{
-    async_graphql::{self, BatchResponse, ErrorExtensions, ServerError},
-    graph::user::ExternalUserViewRow,
-};
-
+use super::{models::IdTokenClaims, Iam};
 use axum::{extract::FromRequestParts, http::request::Parts};
+use axum_jwks::Token;
+use async_graphql::{self, BatchResponse, ServerError};
+use rave_core_database::views::external_user::ExternalUserRow;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
 pub enum AnyApiUser {
@@ -22,7 +14,7 @@ pub enum AnyApiUser {
 #[derive(Debug)]
 pub struct IdentifiedApiUser {
     pub claims: IdTokenClaims,
-    pub stored: ExternalUserViewRow,
+    pub stored: ExternalUserRow,
 }
 
 #[async_trait::async_trait]

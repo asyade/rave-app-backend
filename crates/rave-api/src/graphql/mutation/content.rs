@@ -1,6 +1,6 @@
 use crate::prelude::*;
-use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::{tables::content::ContentColumnJson, async_graphql::Json};
+use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject, Json};
+use rave_core_database::tables::content::ContentColumnJson;
 
 #[derive(Debug, InputObject)]
 pub struct CreateContentInput {

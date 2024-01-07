@@ -5,24 +5,32 @@ edition = "2021"
 
 [dependencies]
 dotenvy = "^0.15"
-thiserror = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
-tracing = "^0.1"
 async-trait = "^0.1"
-tokio = { version = "1.29", features = ["full"] }
 tower-http = { version = "0.5.0", features = ["trace"] }
 
 async-graphql-axum = "7.0"
 axum-macros = "0.4"
 
-rave-entity = { path = "../rave-entity" }
 rave-api-iam = { path = "../rave-api-iam"  }
+rave-api-entity = { path = "../rave-api-entity" }
+rave-core-common = { path = "../rave-core-common" }
+rave-core-asset = { path = "../rave-core-asset" }
+rave-core-database = { path = "../rave-core-database" }
+
+[dependencies.tokio]
+version = "1.29"
+features = [ "full" ]
 
 [dependencies.axum]
 version = "0.7"
 features = ["tracing", "tokio", "macros", "json", "multipart", "form"]
 default-features = false
+
+[dependencies.async-graphql]
+version = "^7.0"
+features = ["apollo_persisted_queries", "chrono-duration", "tokio-sync", "tracing", "graphiql"]
 
 [dependencies.reqwest]
 version = "0.11"
@@ -33,4 +41,4 @@ default-features = false
 default = ["cors", "tempfile"]
 
 cors = ["tower-http/cors"]
-tempfile = ["rave-entity/tempfile"]
+tempfile = ["rave-api-entity/tempfile"]

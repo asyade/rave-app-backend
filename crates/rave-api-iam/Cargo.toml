@@ -14,11 +14,17 @@ async-recursion = "^1.0"
 async-trait = "^0.1"
 tokio = { version = "1.29", features = ["full"] }
 
-rave-entity = { path = "../rave-entity" }
 axum-jwks = { path = "../../libraries/axum-jwks" }
 async-graphql-axum = "7.0"
+
+rave-core-common = { path = "../rave-core-common" }
+rave-core-database = { path = "../rave-core-database" }
 
 [dependencies.axum]
 version = "0.7"
 features = ["tracing", "tokio", "macros", "json", "multipart", "form"]
 default-features = false
+
+[dependencies.async-graphql]
+version = "^7.0"
+features = ["apollo_persisted_queries", "chrono-duration", "tokio-sync", "tracing", "graphiql"]
