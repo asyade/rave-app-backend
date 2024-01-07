@@ -13,6 +13,10 @@ tower-http = { version = "0.5.0", features = ["trace"] }
 async-graphql-axum = "7.0"
 axum-macros = "0.4"
 
+bytes = "1.5.0"
+tower-service = "0.3"
+tokio-stream = "0.1"
+
 rave-api-iam = { path = "../rave-api-iam"  }
 rave-api-entity = { path = "../rave-api-entity" }
 rave-core-common = { path = "../rave-core-common" }

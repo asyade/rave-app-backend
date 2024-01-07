@@ -1,25 +1,27 @@
 use super::CursorExecutor;
-use crate::{prelude::*, views::external_user::ExternalUserRow};
-
+use crate::{
+    prelude::*,
+    views::external_user::{ExternalUserId, ExternalUserRow},
+};
 
 pub trait ExternalUserCursor {
     fn find_external_user_by_external_user_id(
         &mut self,
-        external_user_id: impl AsRef<str>,
+        external_user_id: &ExternalUserId,
     ) -> impl Future<Output = CoreDatabaseResult<Option<ExternalUserRow>>>;
 
     fn create_external_user(
         &mut self,
-        external_user_id: impl AsRef<str>,
-        email: impl AsRef<str>,
-        name: impl AsRef<str>,
-    ) -> impl Future<Output = CoreDatabaseResult<()>>;
+        external_user_id: &ExternalUserId,
+        email: &str,
+        name: &str,
+    ) -> impl Future<Output = CoreDatabaseResult<ExternalUserRow>>;
 }
 
 impl<T: AsMut<CursorExecutor>> ExternalUserCursor for T {
     async fn find_external_user_by_external_user_id(
         &mut self,
-        external_user_id: impl AsRef<str>,
+        external_user_id: &ExternalUserId,
     ) -> CoreDatabaseResult<Option<ExternalUserRow>> {
         sqlx::query_as(
             r#"
@@ -43,17 +45,14 @@ impl<T: AsMut<CursorExecutor>> ExternalUserCursor for T {
     /// * `name` - The public name of the user.
     ///
     /// # Returns
-    /// * `Ok(())` - If the user was created successfully.
+    /// * `Ok(ExternalUserRow)` - If the user was created successfully.
     /// * `Err(CoreDatabaseError::UniqueViolation)` - If the user already exists.
-    ///
-    /// # TODO
-    /// * Return the created user.
     async fn create_external_user(
         &mut self,
-        external_user_id: impl AsRef<str>,
-        email: impl AsRef<str>,
-        name: impl AsRef<str>,
-    ) -> CoreDatabaseResult<()> {
+        external_user_id: &ExternalUserId,
+        email: &str,
+        name: &str,
+    ) -> CoreDatabaseResult<ExternalUserRow> {
         sqlx::query(
             r#"
             with created_entity as (
@@ -63,13 +62,16 @@ impl<T: AsMut<CursorExecutor>> ExternalUserCursor for T {
             insert into public.external_identity
                 (sid, external_user_id, email, name, entity_sid)
                 values (default, $1, $2, $3, (select sid from created_entity))
+                
         "#,
         )
-        .bind(external_user_id.as_ref())
-        .bind(email.as_ref())
-        .bind(name.as_ref())
+        .bind(external_user_id)
+        .bind(email)
+        .bind(name)
         .execute(self.as_mut())
         .await?;
-        Ok(())
+        self.find_external_user_by_external_user_id(external_user_id)
+            .await?
+            .ok_or(CoreDatabaseError::CreatedEntityNotFound)
     }
 }

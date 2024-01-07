@@ -1,10 +1,10 @@
 use crate::prelude::*;
 use axum_jwks::Jwks;
 use error::*;
-use rave_core_database::database::ExternalUserCursor;
+use rave_core_database::{database::ExternalUserCursor, views::external_user::ExternalUserId};
 
 use self::{
-    api_user::{AnyApiUser, IdentifiedApiUser},
+    api_user::IdentifiedApiUser,
     models::IdTokenClaims,
 };
 
@@ -54,36 +54,31 @@ impl Iam {
             .map(|data| data.claims)?;
         tracing::Span::current().record("sub", &claims.sub.as_str());
         tracing::Span::current().record("email", &claims.email.as_str());
-        Self::api_user_from_claims(&self.database, claims, true).await
+        Self::api_user_from_claims(&self.database, claims).await
     }
 
-    #[async_recursion]
     async fn api_user_from_claims(
         database: &Database,
         claims: IdTokenClaims,
-        allow_recursion: bool,
     ) -> IamResult<IdentifiedApiUser> {
+        let external_user_id = ExternalUserId::from(claims.sub.clone());
         let stored_user = database
             .acquire()
             .await?
-            .find_external_user_by_external_user_id(&claims.sub)
+            .find_external_user_by_external_user_id(&external_user_id)
             .await?;
-
-        match stored_user {
-            Some(user) => Ok(IdentifiedApiUser {
-                stored: user,
-                claims,
-            }),
-            None => {
-                info!("no stored user found, creating record");
-                let mut conn = database
+        Ok(IdentifiedApiUser {
+            stored: if let Some(user) = stored_user {
+                user
+            } else {
+                database
                     .acquire()
                     .await?
-                    .create_external_user(&claims.sub, &claims.email, &claims.name)
-                    .await?;
-                Self::api_user_from_claims(database, claims, false).await
-            }
-        }
+                    .create_external_user(&external_user_id, &claims.email, &claims.name)
+                    .await?
+            },
+            claims,
+        })
     }
 }
 

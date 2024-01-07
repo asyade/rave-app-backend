@@ -2,6 +2,8 @@ use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub enum CoreDatabaseError {
+    #[error("the created entity cannot be found")]
+    CreatedEntityNotFound,
     #[error("sqlx error: {0}")]
     DatabaseDriver(#[from] sqlx::Error),
     #[error("failed to accquire database connection")]

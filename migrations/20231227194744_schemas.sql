@@ -20,7 +20,7 @@ CREATE SEQUENCE public.entity_sid_seq
 
 CREATE TABLE public.entity (
     sid integer DEFAULT nextval('public.entity_sid_seq'::regclass) PRIMARY KEY NOT NULL,
-    uid uuid DEFAULT uuid_generate_v4() NOT NULL
+    uid uuid DEFAULT uuid_generate_v4() NOT NULL UNIQUE
 );
 
 ALTER SEQUENCE public.entity_sid_seq OWNED BY public.entity.sid;
@@ -42,8 +42,8 @@ CREATE SEQUENCE public.external_identity_sid_seq
 
 CREATE TABLE public.external_identity (
     sid integer DEFAULT nextval('public.external_identity_sid_seq'::regclass) PRIMARY KEY NOT NULL,
-    external_user_id character varying NOT NULL,
-    email character varying NOT NULL,
+    external_user_id character varying NOT NULL UNIQUE,
+    email character varying NOT NULL UNIQUE,
     entity_sid integer NOT NULL,
     name character varying DEFAULT 'unamed'::character varying NOT NULL
 );
@@ -85,7 +85,7 @@ CREATE SEQUENCE public.asset_sid_seq
 
 CREATE TABLE public.asset(
     sid integer DEFAULT nextval('public.asset_sid_seq'::regclass) PRIMARY KEY NOT NULL,
-    uid uuid DEFAULT uuid_generate_v4() NOT NULL,
+    uid uuid DEFAULT uuid_generate_v4() NOT NULL UNIQUE,
     owner_sid integer NOT NULL,
     kind AssetKind NOT NULL,
     data jsonb NOT NULL
@@ -109,7 +109,7 @@ CREATE SEQUENCE public.content_sid_seq
 
 CREATE TABLE public.content (
     sid integer DEFAULT nextval('public.content_sid_seq'::regclass) PRIMARY KEY NOT NULL,
-    uid uuid DEFAULT uuid_generate_v4() NOT NULL,
+    uid uuid DEFAULT uuid_generate_v4() NOT NULL UNIQUE,
     entity_sid integer NOT NULL,
     content jsonb NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
