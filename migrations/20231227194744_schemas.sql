@@ -86,6 +86,7 @@ CREATE SEQUENCE public.asset_sid_seq
 CREATE TABLE public.asset(
     sid integer DEFAULT nextval('public.asset_sid_seq'::regclass) PRIMARY KEY NOT NULL,
     uid uuid DEFAULT uuid_generate_v4() NOT NULL,
+    owner_sid integer NOT NULL,
     kind AssetKind NOT NULL,
     data jsonb NOT NULL
 );

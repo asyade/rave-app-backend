@@ -1,9 +1,6 @@
-use std::future::Future;
-
-use sqlx::error::DatabaseError;
-
 use super::CursorExecutor;
 use crate::{prelude::*, views::external_user::ExternalUserRow};
+
 
 pub trait ExternalUserCursor {
     fn find_external_user_by_external_user_id(

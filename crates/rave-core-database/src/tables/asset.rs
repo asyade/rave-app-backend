@@ -1,12 +1,20 @@
 use crate::prelude::*;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+use sqlx::types::Json;
+use super::entity::EntitySid;
+
+
+#[derive(Clone, Debug, PartialEq, FromRow)]
 pub struct AssetRow {
-    pub sid: PgSid,
-    pub uid: PgUuid,
+    pub sid: AssetSid,
+    pub uid: AssetUid,
+    pub owner_sid: EntitySid,
     pub kind: AssetKind,
-    pub data: DataColumnJson,
+    pub data: Json<DataColumnJson>,
 }
+
+crate::typed_sql_wrapper!(AssetSid, PgSid);
+crate::typed_sql_wrapper!(AssetUid, PgUuid);
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize, Deserialize, Type)]
 #[serde(rename_all = "lowercase")]
