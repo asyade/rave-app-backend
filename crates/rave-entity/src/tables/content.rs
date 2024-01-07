@@ -1,18 +1,18 @@
 use crate::prelude::*;
-use sqlx::types::Uuid;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContentRow {
     pub sid: i32,
-    pub uid: Uuid,
+    pub uid: PgUuid,
     pub entity_sid: i32,
-    pub content: ContentFieldJson,
+    pub content: ContentColumnJson,
     // created_at,
     // updated_at
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "camelCase")]
-pub enum ContentFieldJson {
+pub enum ContentColumnJson {
     Text {
         text: String
     },

@@ -1,32 +1,32 @@
-use std::borrow::Borrow;
-
-use crate::{options::Auth0Options, prelude::*};
-use axum::{
-    extract::FromRequestParts,
-    http::request::Parts,
-    response::Response,
-};
+use crate::prelude::*;
 use axum_jwks::Jwks;
 use error::*;
 use rave_entity::graph::user::ExternalUserViewRow;
-use reqwest::Client;
-use sqlx::PgPool;
 
 use self::{
     api_user::{AnyApiUser, IdentifiedApiUser},
     models::IdTokenClaims,
 };
 
+pub mod prelude;
 pub mod api_user;
 pub mod error;
 pub mod models;
 
 #[derive(Clone)]
 pub struct Iam {
-    pub client: Arc<Client>,
+    // pub client: Arc<Client>,
     pub auth0_options: Auth0Options,
     jwks: Arc<RwLock<Jwks>>,
     database: Database,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Auth0Options {
+    pub client_id: String,
+    pub client_secret: String,
+    pub domain: String,
+    pub audience: String,
 }
 
 impl Iam {
@@ -37,7 +37,7 @@ impl Iam {
 
         Ok(Self {
             database,
-            client: Arc::new(Client::new()),
+            // client: Arc::new(Client::new()),
             jwks: Arc::new(RwLock::new(jwks)),
             auth0_options: auth0_options.clone(),
         })
@@ -57,7 +57,7 @@ impl Iam {
         Self::api_user_from_claims(&self.database, claims, true).await
     }
 
-    #[async_recursion]
+    #[async_recursion::async_recursion]
     async fn api_user_from_claims(
         database: &Database,
         claims: IdTokenClaims,
@@ -112,5 +112,11 @@ impl Iam {
             }
             Err(e) => Err(IamError::DatabaseDriver(e)),
         }
+    }
+}
+
+impl Auth0Options {
+    pub fn oidc_url(&self) -> String {
+        format!("https://{}/.well-known/openid-configuration", self.domain)
     }
 }

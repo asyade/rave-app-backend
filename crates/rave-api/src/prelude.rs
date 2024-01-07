@@ -3,10 +3,8 @@ pub use rave_entity::async_graphql;
 pub use serde::{Deserialize, Serialize};
 
 pub use crate::error::*;
-pub use crate::options::{Auth0Options, RaveApiOptions};
-pub use crate::services::database::Database;
+pub use crate::options::RaveApiOptions;
 
-pub(crate) use async_recursion::async_recursion;
 pub(crate) use async_trait::async_trait;
 pub(crate) use rave_entity::sqlx::types::*;
 pub(crate) use std::net::SocketAddr;
@@ -18,4 +16,4 @@ pub(crate) use tracing::{
     warn_span,
 };
 pub (crate) use thiserror::Error;
-pub (crate) use rave_entity::sqlx;
+pub (crate) use rave_entity::prelude::*;

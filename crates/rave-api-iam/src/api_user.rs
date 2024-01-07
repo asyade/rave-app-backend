@@ -4,16 +4,14 @@ use std::{
 };
 
 use super::{error::IamError, models::IdTokenClaims, Iam};
-use crate::{graphql, prelude::*};
 use async_graphql_axum::GraphQLResponse;
-use axum::{
-    extract::FromRequestParts,
-    http::request::Parts,
-    response::Response,
-};
 use axum_jwks::Token;
-use rave_entity::graph::user::ExternalUserViewRow;
-use reqwest::Client;
+use rave_entity::{
+    async_graphql::{self, BatchResponse, ErrorExtensions, ServerError},
+    graph::user::ExternalUserViewRow,
+};
+
+use axum::{extract::FromRequestParts, http::request::Parts};
 
 #[derive(Debug)]
 pub enum AnyApiUser {
@@ -27,7 +25,7 @@ pub struct IdentifiedApiUser {
     pub stored: ExternalUserViewRow,
 }
 
-#[async_trait]
+#[async_trait::async_trait]
 impl<S: Send + Sync> FromRequestParts<S> for AnyApiUser {
     type Rejection = async_graphql_axum::GraphQLResponse;
 
@@ -49,11 +47,10 @@ impl<S: Send + Sync> FromRequestParts<S> for AnyApiUser {
     }
 }
 
-fn build_error_response(details: &str) -> GraphQLResponse {
-    todo!()
-    // let response =
-    //     async_graphql::Response::from_errors(vec![async_graphql::ServerError::new(details, None)]);
-    // async_graphql_axum::GraphQLResponse::from(response)
+fn build_error_response(message: &str) -> async_graphql_axum::GraphQLResponse {
+    async_graphql_axum::GraphQLResponse(BatchResponse::Single(
+        async_graphql::Response::from_errors(vec![ServerError::new(message, None)]),
+    ))
 }
 
 impl Display for AnyApiUser {

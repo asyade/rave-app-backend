@@ -1,22 +1,24 @@
 use crate::prelude::*;
 use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use rave_entity::{tables::content::ContentColumnJson, async_graphql::Json};
+use rave_entity::async_graphql::{Json, Upload, Enum};
 
 #[derive(Debug, InputObject)]
-pub struct CreateContentInput {
-    content: Json<ContentColumnJson>,
+pub struct CreateAssetInput {
+    kind: String,
 }
 
 #[derive(Default)]
-pub struct ContentMutation;
+pub struct AssetMutation;
 
 #[Object]
-impl ContentMutation {
-    pub async fn create_content(
+impl AssetMutation {
+    pub async fn upload_asset(
         &self,
-        _ctx: &Context<'_>,
-        _input: CreateContentInput,
+        ctx: &Context<'_>,
+        _input: CreateAssetInput,
+        file: Upload
     ) -> Result<String> {
+        let ctx = file.value(ctx)?.content;
         // let db = ctx.data::<Database>().unwrap();
         // let conn = db.get_connection();
         dbg!(_input);

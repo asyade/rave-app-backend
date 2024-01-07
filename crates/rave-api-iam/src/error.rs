@@ -1,3 +1,5 @@
+use rave_entity::sqlx;
+
 use crate::prelude::*;
 
 #[derive(Debug, Error)]

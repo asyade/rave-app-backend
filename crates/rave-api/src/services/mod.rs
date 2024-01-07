@@ -1,3 +1,2 @@
-pub mod database;
+pub mod asset_provider;
 pub mod feed_provider;
-pub mod iam;

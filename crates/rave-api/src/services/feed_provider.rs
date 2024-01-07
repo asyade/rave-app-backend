@@ -1,10 +1,10 @@
-use std::vec;
-
 use crate::prelude::*;
-use rave_entity::{prelude::{InputType, SimpleObject}, async_graphql::MergedObject};
+use rave_entity::{
+    async_graphql::{Enum, MergedObject},
+    prelude::{InputType, SimpleObject},
+};
 
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Enum)]
 pub enum FeedCategory {
     Home,
     Gems,
@@ -49,7 +49,7 @@ impl FeedProvider {
     pub async fn new() -> Self {
         Self {}
     }
-    
+
     pub async fn get(
         &self,
         feed_uid: Option<Uuid>,

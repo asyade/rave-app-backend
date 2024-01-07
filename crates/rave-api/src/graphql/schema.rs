@@ -1,9 +1,9 @@
 use async_graphql::{EmptySubscription, Schema};
 use rave_entity::async_graphql;
 
+use crate::prelude::*;
 use crate::graphql::{mutation::Mutation, query::Query};
 use crate::prelude::RaveApiResult;
-use crate::services::database::Database;
 use crate::services::feed_provider::FeedProvider;
 
 pub type AppSchema = Schema<Query, Mutation, EmptySubscription>;
