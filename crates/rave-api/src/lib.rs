@@ -6,6 +6,7 @@ pub mod prelude;
 mod graphql;
 mod services;
 
+use crate::services::feed_provider::FeedProvider;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
@@ -22,11 +23,12 @@ use axum::{
 };
 use graphql::mutation::Mutation;
 use graphql::query::Query;
-use graphql::schema::{build_schema, AppSchema};
+use graphql::schema::AppSchema;
 use graphql::service::GraphQL;
 use prelude::*;
 use rave_api_iam::api_user::AnyApiUser;
 use rave_api_iam::Iam;
+use rave_core_asset::asset_manager::AssetManager;
 use tokio::net::TcpListener;
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::trace::TraceLayer;
@@ -45,14 +47,17 @@ pub async fn serve(options: RaveApiOptions) {
     let db = Database::new(&options.database_url)
         .await
         .expect("Failed to initialize database pool");
-
-    let schema: ApiSchema = build_schema(db.clone())
-        .await
-        .expect("failed to build graphql schema");
-
-    let iam = Iam::init(db, options.auth0.clone())
+    let iam = Iam::init(db.clone(), options.auth0.clone())
         .await
         .expect("failed to initialize IAM service");
+
+    let feed = FeedProvider::new().await;
+    let asset = AssetManager::init(db.clone(), options.asset.clone()).await;
+    let schema = Schema::build(Query::default(), Mutation::default(), EmptySubscription)
+        .data(db)
+        .data(feed)
+        .data(asset)
+        .finish();
 
     let mut app = Router::new().route("/", get(graphiql).post_service(GraphQL::new(schema, iam)));
 

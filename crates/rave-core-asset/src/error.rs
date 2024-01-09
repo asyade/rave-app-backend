@@ -4,6 +4,10 @@ use crate::prelude::*;
 
 #[derive(Debug, Error)]
 pub enum AssetError {
+    #[error("no provider found for {0:?}")]
+    ProviderSpecific(Box<dyn std::error::Error>),
+    #[error("no provider found for {0:?}")]
+    NoProviderFoundForAssetKind(AssetKind),
     #[error(transparent)]
     DatabaseError(#[from] CoreDatabaseError),
     #[error("failed to accquire database connection")]
