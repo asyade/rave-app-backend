@@ -1,8 +1,13 @@
+use crate::services::iam::error::IamError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum RaveApiError{
-    #[error("sqlx error: {0}")]
+    #[error(transparent)]
+    Iam(#[from] IamError),
+    #[error("http error: {0}")]
+    Http(String),
+    #[error("database error: {0}")]
     DatabaseDriver(#[from] sqlx::Error),
     #[error("wrong database configuration: {0}")]
     DatabaseConfig(String),

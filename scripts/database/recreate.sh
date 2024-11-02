@@ -1,4 +1,5 @@
 #!/bin/bash
+
 source .env
 
 if !(echo "$DATABASE_URL" | grep -E "localhost|127.0.0.1|0.0.0.0" > /dev/null) && [ ! "$FORCE" == "true" ]; then 

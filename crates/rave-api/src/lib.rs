@@ -40,18 +40,14 @@ pub struct ApiState {
 }
 
 #[instrument(skip(options))]
-pub async fn serve(options: RaveApiOptions) {
-    let db = Database::new().await.expect("Failed to initialize database pool");
+pub async fn serve(options: RaveApiOptions) -> RaveApiResult<()> {
+    let db = Database::new().await?;
 
     let schema: ApiSchema = build_schema(db.clone())
-        .await
-        .expect("failed to build graphql schema");
-
+        .await?;
     let state = ApiState { schema };
-
     let iam = Iam::init(db, options.auth0.clone())
-        .await
-        .expect("failed to initialize IAM service");
+        .await?;
 
     let app = Router::new()
         // .layer(Extension(Arc::new(iam)))
@@ -78,7 +74,8 @@ pub async fn serve(options: RaveApiOptions) {
     axum::Server::bind(&options.listen_address)
         .serve(app.into_make_service())
         .await
-        .expect("failed to start server");
+        .map_err(|e| RaveApiError::Http(e.to_string()))?;
+    Ok(())
 }
 
 #[instrument(skip(req, user, schema), fields(api_user = %user))]
