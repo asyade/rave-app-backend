@@ -35,7 +35,7 @@ For development, you can use the `embedded-database` feature to have a fast setu
 For production or regular development, you will want to use an externaly installed database.
 
 ### Prerequisites
-- Rust nightly toolchain with rustc version >= 1.84
+- Latest stable Rust toolchain
 
 ### OIDC Provider
 You need to setup an OIDC provider that support JWKS and OpenID Connect in order to use the authentication feature.
