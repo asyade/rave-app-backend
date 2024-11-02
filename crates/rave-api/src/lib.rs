@@ -34,6 +34,8 @@ pub mod options;
 
 pub type ApiSchema = Schema<Query, Mutation, EmptySubscription>;
 
+/// The API state contains the GraphQL schema and may contains other state in the future
+/// > It is important to keep in mind that the state must be optional or shared using a cache system to keep the ability to scale horizontally the api
 #[derive(Clone)]
 pub struct ApiState {
     pub schema: ApiSchema,
@@ -41,35 +43,36 @@ pub struct ApiState {
 
 #[instrument(skip(options))]
 pub async fn serve(options: RaveApiOptions) -> RaveApiResult<()> {
-    let db = Database::new().await?;
+    // Initialize the database pool
+    let db = Database::new(&options.database_url).await?;
 
-    let schema: ApiSchema = build_schema(db.clone())
-        .await?;
-    let state = ApiState { schema };
-    let iam = Iam::init(db, options.auth0.clone())
-        .await?;
+    // Initialize the GraphQL schema and wrap it in the `ApiState``
+    let state = ApiState {
+        schema: build_schema(db.clone()).await?,
+    };
+
+    // Initialize the authentication layer
+    let authentication_layer = Extension(Iam::init(db, options.auth0.clone()).await?);
+
+    // Initialize the tracing layer
+    let tracing_layer = TraceLayer::new_for_http().make_span_with(|request: &Request<_>| {
+        let matched_path = request
+            .extensions()
+            .get::<MatchedPath>()
+            .map(MatchedPath::as_str);
+        info_span!(
+            "http_request",
+            method = ?request.method(),
+            matched_path,
+            some_other_field = tracing::field::Empty,
+        )
+    });
 
     let app = Router::new()
-        // .layer(Extension(Arc::new(iam)))
         .route("/", get(graphiql).post(graphql_handler))
-        .layer(
-            TraceLayer::new_for_http().make_span_with(|request: &Request<_>| {
-                let matched_path = request
-                    .extensions()
-                    .get::<MatchedPath>()
-                    .map(MatchedPath::as_str);
-                info_span!(
-                    "http_request",
-                    method = ?request.method(),
-                    matched_path,
-                    some_other_field = tracing::field::Empty,
-                )
-            }),
-        )
-        .layer(Extension(iam))
+        .layer(tracing_layer)
+        .layer(authentication_layer)
         .with_state(state);
-
-    tracing::info!("starting server on {}", options.listen_address);
 
     axum::Server::bind(&options.listen_address)
         .serve(app.into_make_service())
@@ -78,6 +81,12 @@ pub async fn serve(options: RaveApiOptions) -> RaveApiResult<()> {
     Ok(())
 }
 
+/// The GraphQL handler is the entry point for all GraphQL requests that came from the webserver
+/// 
+/// # Arguments
+/// * `state` - The global state of the app
+/// * `user` - The user that made the request (extracted from the JWT)
+/// * `req` - The GraphQL request
 #[instrument(skip(req, user, schema), fields(api_user = %user))]
 async fn graphql_handler(
     State(ApiState { schema, .. }): State<ApiState>,

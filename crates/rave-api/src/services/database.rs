@@ -1,3 +1,5 @@
+//! Database service that provides a SQLx connection pool to the rest of the application
+
 use crate::prelude::*;
 
 use sqlx::pool::PoolConnection;
@@ -10,11 +12,9 @@ pub struct Database {
 }
 
 impl Database {
-    pub async fn new() -> RaveApiResult<Self> {
+    pub async fn new(url: &str) -> RaveApiResult<Self> {
         let pool =
-            Pool::<Postgres>::connect(&std::env::var("DATABASE_URL").map_err(|_| {
-                RaveApiError::DatabaseConfig("`DATABASE_URL` must be set".to_string())
-            })?)
+            Pool::<Postgres>::connect(url)
             .await
             .map_err(|e| {
                 RaveApiError::DatabaseConfig(format!("failed to create connections pool: {}", e))

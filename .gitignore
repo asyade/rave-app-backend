@@ -4,3 +4,4 @@ target_analyser
 .DS_Store
 .vscode
 **/**.DS_Store
+pgdata

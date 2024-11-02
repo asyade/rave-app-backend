@@ -5,7 +5,8 @@ pub use axum_macros::debug_handler;
 
 pub use crate::error::*;
 pub use crate::services::database::Database;
-pub use crate::options::{RaveApiOptions, Auth0Options};
+pub use crate::options::{RaveApiOptions, AuthOptions};
+pub (crate)use crate::AnyApiUser;
 
 pub (crate) use async_recursion::async_recursion;
 pub (crate) use async_trait::async_trait;

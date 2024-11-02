@@ -3,6 +3,9 @@
 //! It can handle multiple databases in parallel allowing to be used in parallel tests environments.
 //! It featires database migration by embedding the migrations located at the root migrations folder.
 
+const PG_VERSION: &str = "16.0.0";
+
+use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 
 use error::EmbeddedDatabaseResult;
@@ -16,6 +19,7 @@ pub struct EmbeddedDatabasePool {
     engine: Arc<RwLock<PostgreSQL>>,
 }
 
+#[allow(dead_code)]
 pub struct EmbeddedDatabase {
     pool: EmbeddedDatabasePool,
     name: String,
@@ -27,7 +31,13 @@ pub struct EmbeddedDatabase {
 
 impl EmbeddedDatabasePool {
     pub async fn new() -> EmbeddedDatabaseResult<Self> {
-        let mut db = PostgreSQL::default();
+        let mut settings = postgresql_embedded::Settings::default();
+        if let Ok(data_dir) = std::env::var("PG_DATA_DIR") {
+            settings.data_dir = PathBuf::from(data_dir);
+            settings.temporary = false;
+            settings.version = VersionReq::parse(PG_VERSION).expect("Invalid PG version");
+        }
+        let mut db = PostgreSQL::new(settings);
         info!("Setting up database (this might take a while) ...");
         db.setup().await?;
         info!("Starting database ...");
@@ -80,7 +90,9 @@ impl EmbeddedDatabase {
     }
 
     pub async fn get_pool(&self) -> sqlx::Pool<sqlx::Postgres> {
-        sqlx::Pool::connect(&self.connection_string()).await.unwrap()
+        sqlx::Pool::connect(&self.connection_string())
+            .await
+            .unwrap()
     }
 
     pub fn connection_string(&self) -> String {

@@ -1,6 +1,6 @@
 use std::borrow::Borrow;
 
-use crate::{options::Auth0Options, prelude::*};
+use crate::{options::AuthOptions, prelude::*};
 use axum::{
     extract::FromRequestParts,
     headers::{authorization::Bearer, Authorization},
@@ -26,18 +26,17 @@ pub mod models;
 #[derive(Clone)]
 pub struct Iam {
     pub client: Arc<Client>,
-    pub auth0_options: Auth0Options,
+    pub auth0_options: AuthOptions,
     jwks: Arc<RwLock<Jwks>>,
     database: Database,
 }
 
 impl Iam {
     #[instrument(skip(auth0_options, database), err, fields(domain = %auth0_options.domain, audience = %auth0_options.audience))]
-    pub async fn init(database: Database, auth0_options: Auth0Options) -> IamResult<Self> {
+    pub async fn init(database: Database, auth0_options: AuthOptions) -> IamResult<Self> {
         tracing::info!("feetching jwks");
         let jwks =
             Jwks::from_oidc_url(&auth0_options.oidc_url(), auth0_options.audience.clone()).await?;
-
         Ok(Self {
             database,
             client: Arc::new(Client::new()),

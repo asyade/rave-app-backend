@@ -22,11 +22,11 @@ macro_rules! opt_from_env {
 pub struct RaveApiOptions {
     pub listen_address: SocketAddr,
     pub database_url: String,
-    pub auth0: Auth0Options,
+    pub auth0: AuthOptions,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Auth0Options {
+pub struct AuthOptions {
     pub client_id: String,
     pub client_secret: String,
     pub domain: String,
@@ -43,22 +43,22 @@ impl RaveApiOptions {
                 .parse()
                 .map_err(|e| RaveApiError::Config(format!("invalid listen address: {}", e)))?,
             database_url: opt_from_env!("DATABASE_URL", database_url)?,
-            auth0: Auth0Options::try_from_env()?,
+            auth0: AuthOptions::try_from_env()?,
         })
     }
 }
 
-impl Auth0Options {
+impl AuthOptions {
     pub fn oidc_url(&self) -> String {
         format!("https://{}/.well-known/openid-configuration", self.domain)
     }
 
     pub fn try_from_env() -> RaveApiResult<Self> {
-        Ok(Auth0Options {
-            client_id: opt_from_env!("AUTH0_CLIENT_ID")?,
-            client_secret: opt_from_env!("AUTH0_CLIENT_SECRET")?,
-            domain: opt_from_env!("AUTH0_DOMAIN")?,
-            audience: opt_from_env!("AUTH0_AUDIENCE")?,
+        Ok(AuthOptions {
+            client_id: opt_from_env!("OIDC_CLIENT_ID")?,
+            client_secret: opt_from_env!("OIDC_CLIENT_SECRET")?,
+            domain: opt_from_env!("OIDC_DOMAIN")?,
+            audience: opt_from_env!("OIDC_AUDIENCE")?,
         })
     }
 }

@@ -52,7 +52,7 @@ impl FeedProvider {
     pub async fn get(
         &self,
         feed_uid: Option<Uuid>,
-        owner_uid: Uuid,
+        requested_by: &AnyApiUser,
         category: FeedCategory,
         limit: usize,
         offset: Option<FeedOffset>,

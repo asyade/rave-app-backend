@@ -1,12 +1,10 @@
 use crate::{
     prelude::*,
-    services::{
-        feed_provider::{FeedCategory, FeedChunk, FeedOffset, FeedProvider},
-    },
+    services::feed_provider::{FeedCategory, FeedChunk, FeedOffset, FeedProvider},
 };
 
 use async_graphql::{Context, Object, Result};
-use rave_entity::{async_graphql};
+use rave_entity::async_graphql;
 
 #[derive(Default)]
 pub struct FeedQuery;
@@ -20,10 +18,10 @@ impl FeedQuery {
         category: FeedCategory,
         limit: usize,
     ) -> Result<FeedChunk> {
-        // let api_user = ctx.data::<ApiUser>()?;
+        let api_user = ctx.data::<crate::AnyApiUser>()?;
         let feed_provider = ctx.data::<FeedProvider>()?;
         let chunk = feed_provider
-            .get(None, Uuid::new_v4(), category, limit, None)
+            .get(None, api_user, category, limit, None)
             .await?;
         tracing::info!(
             offset = chunk.offset,

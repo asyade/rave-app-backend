@@ -6,11 +6,3 @@ use sqlx::types::Uuid;
 pub enum ContentRowJson {
     Text(String),
 }
-
-pub struct ContentRow {
-    sid: i32,
-    uid: Uuid,
-    entity_sid: i32,
-    // created_at,
-    // updated_at
-}

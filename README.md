@@ -1,4 +1,4 @@
-# RUST Backend Template - GraphQL API/PostgreSQL database/JWKS authentication
+# *WIP* RUST Backend template: GraphQL/PostgreSQL/JWKS
 This repository provide a production ready stateless backend application template written in Rust.
 Its mainely design to be the backend of a SaaS or mobile application backend featuring a GraphQL API, a PostgreSQL database (that can be embedded in the application or external) and a JWKS authentication compatible with Auth0 or any other provider supporting JWKS and OpenID Connect.
 
@@ -26,12 +26,69 @@ But even better it came with everythings you need to easyly build proper develop
     - Feature integration tests execution with isolated database and parallel execution
 - Multiplatform (Linux/MacOS/Windows)
 
-## How to run the project with minimal setup
-In this section we will see how to run the project with a minimal setup, without a persistent database and without Auth0.
+## Demo frontend
+This template came with an fully featured example of frontend application that uses the `expo` framework to build a mobile/web application that use the  API and perform authentication using Auth0.
+
+## How to prepare and run the project
+There is various way to run the project depending on your needs.
+For development, you can use the `embedded-database` feature to have a fast setup with an embeded database.
+For production or regular development, you will want to use an externaly installed database.
 
 ### Prerequisites
 - Rust nightly toolchain with rustc version >= 1.84
-- `sqlx_cli` golbaly installed (i.e `cargo install sqlx-cli`)
+
+### OIDC Provider
+You need to setup an OIDC provider that support JWKS and OpenID Connect in order to use the authentication feature.
+To do so we will use Auth0 as an example but you can use any other OpenID Connect provider that support JWKS and OpenID Connect.
+
+#### Auth0
+You will need to create a new application in your Auth0 tenant and get the following information:
+- Client ID
+- Client Secret
+- Domain
+- Audience
+
+Here is a picture of the Auth0 application settings:
+
+![Auth0 Application Settings](./images/auth0-application-settings.png)
+
+The audience is the API identifier, you can find it under the "settings" section of your application:
+
+![Auth0 API Identifier](./images/auth0-api-identifier.png)
+
+
+### Preparing your environment
+You can use the `.env.example` as a template to create your own `.env` file with the correct environment variables.
 
 ### Running the project
+#### Development
+To run the project in development mode, you can use the following command:
 
+```bash
+cargo run --features embedded-database
+```
+
+or if you want to run the project without the embedded database:
+> You also can use the `DATABASE_URL` environment variable to set the database url.
+```bash
+cargo run --database-url <your-database-url>
+```
+
+```bash
+cargo run
+```
+
+Once the application is running, you can test the API using your browser and directly access the GraphQL playground at `http://<listen_address>/graphql`
+
+Once whithin the playground you can test the API with the following query:
+
+```graphql
+query {
+  getCurrentUserFeed(category: HOME, limit: 0) {
+    offset
+    posts {
+      content
+    }
+  }
+}
+```
