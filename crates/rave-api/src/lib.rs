@@ -3,9 +3,7 @@
 pub mod error;
 pub mod prelude;
 
-mod graphql;
-mod services;
-
+use prelude::*;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
@@ -20,15 +18,12 @@ use axum::{
     routing::get,
     Router,
 };
-use graphql::mutation::Mutation;
-use graphql::query::Query;
-use graphql::schema::{build_schema, AppSchema};
-use prelude::*;
-use services::iam::api_user::AnyApiUser;
+use rave_api_graphql::mutation::Mutation;
+use rave_api_graphql::query::Query;
+use rave_api_graphql::schema::{build_schema, AppSchema};
+
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::trace::TraceLayer;
-
-use crate::services::iam::Iam;
 
 pub mod options;
 

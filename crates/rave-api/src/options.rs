@@ -3,6 +3,7 @@ use std::net::SocketAddr;
 use serde::{Deserialize, Serialize};
 
 use crate::prelude::{RaveApiError, RaveApiResult};
+use rave_api_service_iam::AuthOptions;
 
 macro_rules! opt_from_env {
     ($name:expr, $default:expr) => {{
@@ -25,14 +26,6 @@ pub struct RaveApiOptions {
     pub auth0: AuthOptions,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct AuthOptions {
-    pub client_id: String,
-    pub client_secret: String,
-    pub domain: String,
-    pub audience: String,
-}
-
 impl RaveApiOptions {
     pub fn try_from_env(
         listen_address: Option<String>,
@@ -44,21 +37,6 @@ impl RaveApiOptions {
                 .map_err(|e| RaveApiError::Config(format!("invalid listen address: {}", e)))?,
             database_url: opt_from_env!("DATABASE_URL", database_url)?,
             auth0: AuthOptions::try_from_env()?,
-        })
-    }
-}
-
-impl AuthOptions {
-    pub fn oidc_url(&self) -> String {
-        format!("https://{}/.well-known/openid-configuration", self.domain)
-    }
-
-    pub fn try_from_env() -> RaveApiResult<Self> {
-        Ok(AuthOptions {
-            client_id: opt_from_env!("OIDC_CLIENT_ID")?,
-            client_secret: opt_from_env!("OIDC_CLIENT_SECRET")?,
-            domain: opt_from_env!("OIDC_DOMAIN")?,
-            audience: opt_from_env!("OIDC_AUDIENCE")?,
         })
     }
 }

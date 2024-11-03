@@ -1,27 +1,19 @@
-use std::borrow::Borrow;
+use crate::prelude::*;
 
-use crate::{options::AuthOptions, prelude::*};
-use axum::{
-    extract::FromRequestParts,
-    headers::{authorization::Bearer, Authorization},
-    http::request::Parts,
-    response::Response,
-    TypedHeader,
-};
 use axum_jwks::Jwks;
 use error::*;
-use rave_entity::graph::user::ExternalUserViewRow;
+use rave_entity::database_views::user::ExternalUserViewRow;
 use reqwest::Client;
-use sqlx::PgPool;
 
-use self::{
-    api_user::{AnyApiUser, IdentifiedApiUser},
-    models::IdTokenClaims,
-};
+use self::{api_user::IdentifiedApiUser, models::IdTokenClaims};
+
+pub use options::AuthOptions;
 
 pub mod api_user;
 pub mod error;
 pub mod models;
+pub mod options;
+pub mod prelude;
 
 #[derive(Clone)]
 pub struct Iam {
@@ -81,12 +73,10 @@ impl Iam {
         .await;
 
         match stored_user {
-            Ok(user) => {
-                Ok(IdentifiedApiUser {
-                    stored: user,
-                    claims,
-                })
-            }
+            Ok(user) => Ok(IdentifiedApiUser {
+                stored: user,
+                claims,
+            }),
             Err(sqlx::Error::RowNotFound) if allow_recursion => {
                 info!("no stored user found, creating record");
                 let mut conn = database
@@ -104,12 +94,12 @@ impl Iam {
                             (sid, external_user_id, email, name, entity_sid)
                             values (default, $1, $2, $3, (select sid from created_entity))
                     "#,
-                    )
-                    .bind(&claims.sub)
-                    .bind(&claims.email)
-                    .bind(&claims.name)
-                    .execute(conn.as_mut())
-                    .await?;
+                )
+                .bind(&claims.sub)
+                .bind(&claims.email)
+                .bind(&claims.name)
+                .execute(conn.as_mut())
+                .await?;
                 Self::api_user_from_claims(database, claims, false).await
             }
             Err(e) => Err(IamError::DatabaseDriver(e)),

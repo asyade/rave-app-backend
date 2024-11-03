@@ -1,7 +1,5 @@
 use crate::prelude::*;
-use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
 
-use crate::services::database::Database;
 
 // I normally separate the input types into separate files/modules, but this is just
 // a quick example.

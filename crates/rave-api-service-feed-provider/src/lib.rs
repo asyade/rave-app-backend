@@ -1,7 +1,6 @@
 use std::vec;
-
-use crate::prelude::*;
-use rave_entity::{prelude::{InputType, SimpleObject}, async_graphql::MergedObject};
+use uuid::Uuid;
+use rave_entity::{prelude::*, async_graphql};
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
@@ -17,6 +16,7 @@ pub struct FeedProvider {}
 
 pub struct FeedUID {}
 
+#[allow(dead_code)]
 pub struct Feed {
     uid: Uuid,
     onwer_uid: Uuid,
@@ -51,17 +51,17 @@ impl FeedProvider {
     
     pub async fn get(
         &self,
-        feed_uid: Option<Uuid>,
-        requested_by: &AnyApiUser,
-        category: FeedCategory,
-        limit: usize,
-        offset: Option<FeedOffset>,
-    ) -> RaveApiResult<FeedChunk> {
-        Ok(FeedChunk {
+        _feed_uid: Option<Uuid>,
+        // requested_by: &AnyApiUser,
+        _category: FeedCategory,
+        _limit: usize,
+        _offset: Option<FeedOffset>,
+    ) -> FeedChunk {
+        FeedChunk {
             version: 1,
             offset: 0,
             posts: vec![
             ],
-        })
+        }
     }
 }

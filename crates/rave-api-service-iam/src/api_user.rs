@@ -1,20 +1,15 @@
-use std::{
-    collections::HashMap,
-    fmt::{Display, Formatter},
-};
+use crate::prelude::*;
 
-use super::{error::IamError, models::IdTokenClaims, Iam};
-use crate::{graphql, prelude::*};
+use super::{models::IdTokenClaims, Iam};
+
 use async_graphql_axum::GraphQLResponse;
 use axum::{
     extract::FromRequestParts,
     headers::{authorization::Bearer, Authorization},
     http::request::Parts,
-    response::Response,
     TypedHeader,
 };
-use rave_entity::graph::user::ExternalUserViewRow;
-use reqwest::Client;
+use rave_entity::database_views::user::ExternalUserViewRow;
 
 #[derive(Debug)]
 pub enum AnyApiUser {

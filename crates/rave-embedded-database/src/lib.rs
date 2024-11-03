@@ -9,8 +9,10 @@ use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 
 use error::EmbeddedDatabaseResult;
+use tracing::info;
+
 pub use postgresql_embedded::*;
-use tracing::{error, info};
+
 pub mod error;
 pub mod prelude;
 
@@ -74,13 +76,6 @@ impl EmbeddedDatabase {
             host: settings.host.clone(),
             pool,
         })
-    }
-
-    pub async fn load(
-        pool: EmbeddedDatabasePool,
-        name: String,
-    ) -> EmbeddedDatabaseResult<EmbeddedDatabase> {
-        todo!()
     }
 
     pub async fn run_migrations(&self) -> EmbeddedDatabaseResult<()> {

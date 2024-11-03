@@ -1,0 +1,11 @@
+[package]
+name = "rave-api-service-database"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thiserror = "1"
+
+[dependencies.sqlx]
+version = "0.7"
+features = ["runtime-tokio-rustls", "postgres", "macros", "uuid"]

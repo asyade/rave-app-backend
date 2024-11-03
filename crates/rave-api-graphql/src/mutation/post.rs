@@ -1,6 +1,4 @@
 use crate::prelude::*;
-use async_graphql::{self, Context, InputObject, Object, Result, SimpleObject};
-use crate::services::database::Database;
 
 #[derive(InputObject)]
 pub struct CreatePostInput {

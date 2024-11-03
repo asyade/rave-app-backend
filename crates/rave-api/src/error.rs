@@ -1,16 +1,19 @@
-use crate::services::iam::error::IamError;
 use thiserror::Error;
+
+use rave_api_service_iam::error::IamError;
+use rave_api_service_database::error::DatabaseServiceError;
+
 
 #[derive(Debug, Error)]
 pub enum RaveApiError{
     #[error(transparent)]
+    GraphQL(#[from] rave_api_graphql::error::RaveGraphqlError),
+    #[error(transparent)]
     Iam(#[from] IamError),
+    #[error(transparent)]
+    Database(#[from] DatabaseServiceError),
     #[error("http error: {0}")]
     Http(String),
-    #[error("database error: {0}")]
-    DatabaseDriver(#[from] sqlx::Error),
-    #[error("wrong database configuration: {0}")]
-    DatabaseConfig(String),
     #[error("wrong configuration: {0}")]
     Config(String),
 }
