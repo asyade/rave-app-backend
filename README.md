@@ -1,7 +1,10 @@
-# Rust Backend Template: GraphQL + PostgreSQL + JWKS
+# Rust Backend Template: GraphQL + PostgreSQL + OpenID Connect
 A production-ready backend template featuring GraphQL API, PostgreSQL database, and JWKS authentication. Built with clean architecture principles and modern Rust practices.
 
 ## 🚀 Key Features
+
+### Frontend template for Android/iOS applications
+- [Rave Mobile App Template](https://github.com/asyade/rave-app-frontend)
 
 ### Core Technologies
 - **GraphQL API** using async-graphql with playground support
@@ -75,3 +78,4 @@ cargo test user_tests --features embedded-database
 ## Project Structure
 Refer to the [Project Structure](./docs/project-structure.md) for more information on the project structure.
 
+![Auth0 API Identifier](./docs/images/architecture_overview.png)
