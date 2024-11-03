@@ -71,3 +71,7 @@ cargo test --features embedded-database
 # Run specific test suite
 cargo test user_tests --features embedded-database
 ```
+
+## Project Structure
+Refer to the [Project Structure](./docs/project-structure.md) for more information on the project structure.
+
