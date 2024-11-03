@@ -241,9 +241,9 @@ dependencies = [
 
 [[package]]
 name = "async-recursion"
-version = "1.0.5"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fd55a5ba1179988837d24ab4c7cc8ed6efdeff578ede0416b4225a5fca35bd0"
+checksum = "3b43422f69d8ff38f95f1b2bb76517c91589a924d1559a0e935d7c8ce0274c11"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2216,14 +2216,14 @@ name = "rave-api"
 version = "0.1.0"
 dependencies = [
  "async-graphql-axum",
- "async-recursion",
- "async-trait",
  "axum",
- "axum-jwks",
  "axum-macros 0.4.2",
  "dotenvy",
+ "rave-api-graphql",
+ "rave-api-service-database",
+ "rave-api-service-feed-provider",
+ "rave-api-service-iam",
  "rave-entity",
- "reqwest 0.11.22",
  "serde",
  "serde_json",
  "sqlx 0.7.4",
@@ -2232,6 +2232,58 @@ dependencies = [
  "tower-http",
  "tracing",
  "uuid",
+]
+
+[[package]]
+name = "rave-api-graphql"
+version = "0.1.0"
+dependencies = [
+ "async-graphql-axum",
+ "axum",
+ "rave-api-service-database",
+ "rave-api-service-feed-provider",
+ "rave-entity",
+ "serde",
+ "thiserror",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "rave-api-service-database"
+version = "0.1.0"
+dependencies = [
+ "sqlx 0.7.4",
+ "thiserror",
+]
+
+[[package]]
+name = "rave-api-service-feed-provider"
+version = "0.1.0"
+dependencies = [
+ "rave-entity",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "rave-api-service-iam"
+version = "0.1.0"
+dependencies = [
+ "async-graphql-axum",
+ "async-recursion",
+ "async-trait",
+ "axum",
+ "axum-jwks",
+ "rave-api-service-database",
+ "rave-entity",
+ "reqwest 0.11.22",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

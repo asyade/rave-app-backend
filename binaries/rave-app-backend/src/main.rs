@@ -1,11 +1,12 @@
-use std::process::{abort, ExitCode};
-
+use clap::Parser;
+use std::process::abort;
 use dotenv::dotenv;
-use rave_api::prelude::*;
 use tracing::{error, info};
+
+use rave_api::prelude::*;
+
 mod log;
 
-use clap::Parser;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

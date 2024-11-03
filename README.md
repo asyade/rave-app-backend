@@ -1,6 +1,97 @@
+# Rust Backend Template: GraphQL + PostgreSQL + JWKS
+A production-ready backend template featuring GraphQL API, PostgreSQL database, and JWKS authentication. Built with clean architecture principles and modern Rust practices.
+
+## 🚀 Key Features
+
+### Core Technologies
+- **GraphQL API** using async-graphql with playground support
+- **PostgreSQL Database** with both embedded (for fast development or testing) and external options
+- **JWKS Authentication** compatible with Auth0 and other OpenID Connect providers
+- **Axum Web Framework** for flexible and performant HTTP handling
+
+### Developer Experience
+- Fast compilation times and responsive IDE support
+- Embedded database option for rapid development
+- Authentication-free mode for testing
+- Comprehensive integration tests with isolated database support
+- Cross-platform support (Linux/MacOS/Windows)
+
+### Production Ready
+- Docker containerization with optimized caching
+- CI/CD pipeline configuration
+- Structured logging with `tracing`
+- Type-safe error handling using `thiserror`
+- Database migrations and entity patterns using `sqlx`
+
+## 🏁 Getting Started
+
+### Prerequisites
+- Rust toolchain (latest stable)
+- PostgreSQL (optional if using embedded database)
+- Auth0 account or other OIDC provider
+
+### Environment Setup
+1. Copy `.env.example` to `.env` and update the variables with your own values.
+2. Refer to the [Auth0 documentation](./docs/setup-auth0.md) for more information on how to configure the authentication system.
+3. Refer to [Database Setup](./docs/setup-database.md) for more information on how to configure the database.
+
+### Running the Application
+
+#### Development Mode (with embedded database)
+```bash
+cargo run --features embedded-database
+```
+
+#### Standard Mode (external database)
+```bash
+cargo run --database-url "postgresql://user:pass@localhost/dbname"
+# or with .env configuration
+cargo run
+```
+
+### Testing the API
+1. Access GraphQL playground: `http://<listen_address>/graphql`
+2. Try a sample query:
+   ```graphql
+   query {
+     getCurrentUserFeed(category: HOME, limit: 10) {
+       offset
+       posts {
+         content
+       }
+     }
+   }
+   ```
+
+## 🔐 Authentication Setup
+
+### Auth0 Configuration
+Refer to the [Auth0 documentation](./docs/setup-auth0.md) for more information on how to configure the authentication system.
+
+### Other OIDC Providers
+The authentication system is compatible with any OIDC provider that supports JWKS. Ensure your provider exposes a JWKS endpoint and configure the environment variables accordingly.
+
+## 📱 Demo Frontend
+Includes an example frontend application built with Expo framework:
+- Mobile and web support
+- Auth0 integration
+- GraphQL API consumption examples
+
+## 🧪 Testing
+```bash
+# Run integration tests (uses isolated database)
+cargo test --features embedded-database
+
+# Run specific test suite
+cargo test user_tests --features embedded-database
+```
+
+// ... rest of the existing content if needed ...
+
+
 # *WIP* RUST Backend template: GraphQL/PostgreSQL/JWKS
-This repository provide a production ready stateless backend application template written in Rust.
-Its mainely design to be the backend of a SaaS or mobile application backend featuring a GraphQL API, a PostgreSQL database (that can be embedded in the application or external) and a JWKS authentication compatible with Auth0 or any other provider supporting JWKS and OpenID Connect.
+This repository provide a starting point for building a backend application using Rust.
+It features a GraphQL API, a PostgreSQL database (that can be embedded in the application or external) and a JWKS authentication compatible with Auth0 or any other provider supporting JWKS and OpenID Connect.
 
 The goal is to provide a proper starting point for building highly available, secure, and performant backend applications while avoiding common pitfalls.
 The code feature clean architecture and is designed in a modular way as well as follow RUST best practices empowering concurrency and performance at runtime but also buildtime featuring fast compilation times and responsive rust analyzer performance.
@@ -10,7 +101,7 @@ But even better it came with everythings you need to easyly build proper develop
 ## Features overview
 - Flexible webserver with axum
 - Proper Asynchronous GraphQL API
-- Auth0 user management with JWT verification
+- OpenID Connect authentication using JWKS (compatible with Auth0)
 - PostgreSQL Database management
     - Migrations
     - Usage of Entity pattern
@@ -40,21 +131,6 @@ For production or regular development, you will want to use an externaly install
 ### OIDC Provider
 You need to setup an OIDC provider that support JWKS and OpenID Connect in order to use the authentication feature.
 To do so we will use Auth0 as an example but you can use any other OpenID Connect provider that support JWKS and OpenID Connect.
-
-#### Auth0
-You will need to create a new application in your Auth0 tenant and get the following information:
-- Client ID
-- Client Secret
-- Domain
-- Audience
-
-Here is a picture of the Auth0 application settings:
-
-![Auth0 Application Settings](./images/auth0-application-settings.png)
-
-The audience is the API identifier, you can find it under the "settings" section of your application:
-
-![Auth0 API Identifier](./images/auth0-api-identifier.png)
 
 
 ### Preparing your environment
@@ -92,3 +168,4 @@ query {
   }
 }
 ```
+

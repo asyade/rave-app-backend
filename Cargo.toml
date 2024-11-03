@@ -1,4 +1,4 @@
 [workspace]
 resolver = "2"
 
-members = ["binaries/rave-app-backend", "crates/rave-api", "crates/rave-embedded-database", "crates/rave-entity"]
+members = ["binaries/rave-app-backend", "crates/rave-api", "crates/rave-api-service-database", "crates/rave-api-service-iam", "crates/rave-embedded-database", "crates/rave-entity", "crates/rave-api-graphql", "crates/rave-api-service-feed-provider"]
