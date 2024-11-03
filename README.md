@@ -4,7 +4,7 @@ A production-ready backend template featuring GraphQL API, PostgreSQL database, 
 ## 🚀 Key Features
 
 ### Frontend template for Android/iOS applications
-- [Rave Mobile App Template](https://github.com/asyade/rave-app-frontend)
+- [Expo Mobile App Template](https://github.com/asyade/rave-app-frontend)
 
 ### Core Technologies
 - **GraphQL API** using async-graphql with playground support
